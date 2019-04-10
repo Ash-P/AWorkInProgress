@@ -10,7 +10,9 @@ import java.util.Date;
 
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -39,7 +41,7 @@ public class Targets extends Application {
 	private final Button submitBtn = new Button();
 	private final Button clearBtn = new Button();
 	private Scene primaryScene;
-	private Group primaryGroup = new Group();
+	private Group primaryGroup;
 
 	public void createAddATargetUI() {
 		targetTypeBox.setPromptText("Type");
@@ -56,6 +58,7 @@ public class Targets extends Application {
 		GridPane.setConstraints(bookTitleBox, 0, 2);
 
 		deadlineDatePicker.setPromptText("Deadline Date");
+		deadlineDatePicker.setEditable(false); //forces a date to be selected from the calendar (prevents past dates being entered manually)
 		deadlineDatePicker.setDayCellFactory(picker -> new DateCell() { //disable past dates
 			public void updateItem(LocalDate date, boolean empty) {
 				super.updateItem(date, empty);
@@ -87,6 +90,7 @@ public class Targets extends Application {
 		grid.setHgap(5);
 		grid.getChildren().addAll(targetTypeBox,bookTitleBox,deadlineDatePicker,targetValueTxt,createCalEventBox,submitBtn,clearBtn);
 
+		primaryGroup = new Group();
 		primaryGroup.getChildren().addAll(grid,submitBtn,clearBtn);
 	}
 
@@ -117,7 +121,7 @@ public class Targets extends Application {
 				if(validateTargetCreationFields(targetType, deadlineDate, bookID, targetValue)) {
 					storage.targetData target = addNewTarget(targetType, deadlineDate, bookID, targetValue);
 					if(createCalEventBox.getValue().equals("Yes")) {
-						CreateCSV.createCSV(target);
+						//CreateCSV.createCSV(target);
 					}
 				}
 			}
@@ -129,33 +133,34 @@ public class Targets extends Application {
 			public void handle(ActionEvent arg0) {
 				targetTypeBox.valueProperty().set(null);
 				bookTitleBox.valueProperty().set(null);
-				bookTitleBox.setDisable(false);
 				deadlineDatePicker.valueProperty().set(null);
 				targetValueTxt.clear();
+				createCalEventBox.valueProperty().set(null);
 			}
 		});
 
 	}
 
-	public static int getBookID(String bookTitle) {
-		for(storage.bookData b : alldata.bookStore) {
-			if(b.title == bookTitle) return b.bookID;
-		}
-		return 0; //indicates error
-	}
-
 	private static Boolean validateTargetCreationFields(int targetType, String deadlineDate, int bookID, int targetValue) {
-		//TODO :
-		//no semicolons
-		//targetType is 1, 2 or 3 (i.e. not 0)
-		//targetValue is positive
-		//if type if 1, targetValue must be <= pages remaining of book
+		if(targetType == 0) return false; //means an error has occurred in converting from the String ComboBox to integer in SubmitBtn's ActionEvent (in setupHanles())
+		if(targetValue <= 0) return false;
+		if(targetType == 1) {
+			int pagesRemaining = -1;
+			for(storage.bookData b : alldata.bookStore) {
+				if(b.bookID == bookID) {
+					pagesRemaining = b.pages - Integer.parseInt(b.pagesRead);
+					break;
+				}
+			}
+			if(targetValue > pagesRemaining) return false;
+		}
 		return true;
 	}
 
 	private static storage.targetData addNewTarget(int targetType, String deadlineDate, int bookID, int targetValue) {
 		storage.targetData target = new storage.targetData();
-		target.targetID = 1; //TODO get next ID value
+		//target.targetID = getHighestCounter(false) + 1;
+		target.targetID = 1;
 		target.targetType = targetType;
 		target.isComplete = false;
 		target.deadlineDate = deadlineDate;
@@ -166,30 +171,29 @@ public class Targets extends Application {
 		return target;
 	}
 
-	public void createViewTargetsUI() {
-		TableView<storage.targetData> tableView = getTargetsTable();
-		//TODO create GUI
-	}
-
-	private static TableView<storage.targetData> getTargetsTable() {
-		TableColumn<storage.targetData, String> targetIDCol = new TableColumn<storage.targetData, String>("Target ID");
-		TableColumn<storage.targetData, String> targetTypeCol = new TableColumn<storage.targetData, String>("Target Type");
-		TableColumn<storage.targetData, String> isCompleteCol = new TableColumn<storage.targetData, String>("Completed");
+	private void viewTargetsTable() {
+		//TableColumn<storage.targetData, String> targetTypeCol = new TableColumn<storage.targetData, String>("Target Type");
+		TableColumn<storage.targetData, Integer> targetTypeCol = new TableColumn<storage.targetData, Integer>("Target Type");
+		targetTypeCol.setCellValueFactory(new PropertyValueFactory<>("targetType"));
+		TableColumn<storage.targetData, Boolean> isCompleteCol = new TableColumn<storage.targetData, Boolean>("Completed");
+		isCompleteCol.setCellValueFactory(new PropertyValueFactory<>("isComplete"));
 		TableColumn<storage.targetData, String> deadlineDateCol = new TableColumn<storage.targetData, String>("Deadline Date");
-		TableColumn<storage.targetData, String> bookTitleCol = new TableColumn<storage.targetData, String>("Book Title");
-		TableColumn<storage.targetData, String> targetValueCol = new TableColumn<storage.targetData, String>("Target Value");
-		TableColumn<storage.targetData, String> valueRemainingCol = new TableColumn<storage.targetData, String>("Value Remaining");
+		deadlineDateCol.setCellValueFactory(new PropertyValueFactory<>("deadlineDate"));
+		TableColumn<storage.targetData, Integer> targetValueCol = new TableColumn<storage.targetData, Integer>("Target Value");
+		targetValueCol.setCellValueFactory(new PropertyValueFactory<>("targetValue"));
+		TableColumn<storage.targetData, Integer> valueRemainingCol = new TableColumn<storage.targetData, Integer>("Value Remaining");
+		valueRemainingCol.setCellValueFactory(new PropertyValueFactory<>("valueRemaining"));
 
 		TableView<storage.targetData> table = new TableView<storage.targetData>();
 		table.setEditable(false);
-		table.getColumns().addAll( Arrays.asList(targetIDCol, targetTypeCol, isCompleteCol, deadlineDateCol, bookTitleCol, targetValueCol, valueRemainingCol) );
+		table.getColumns().addAll( Arrays.asList(targetTypeCol, isCompleteCol, deadlineDateCol, targetValueCol, valueRemainingCol) );
 
-		ObservableList<storage.targetData> observableTargetList = FXCollections.observableArrayList(alldata.targetStore);
+		ObservableList<storage.targetData> observableTargetList = FXCollections.observableArrayList();
+		for(storage.targetData t : alldata.targetStore) observableTargetList.add(t);
 		table.setItems(observableTargetList);
-
-		//TODO remove/hide targetID column
-
-		return table;
+		
+		primaryGroup = new Group();
+		primaryGroup.getChildren().add(table);
 	}
 
 	/**
@@ -214,8 +218,9 @@ public class Targets extends Application {
 					Date date = Calendar.getInstance().getTime();
 					try {
 						if(DATE_FORMAT.parse(t.deadlineDate).after(date)) {
-							targetCompleted(t);
+							targetCompleted(t, true);
 						}
+						else targetCompleted(t, false);
 					} catch (ParseException e) {
 					}
 				}
@@ -228,8 +233,9 @@ public class Targets extends Application {
 					Date date = Calendar.getInstance().getTime();
 					try {
 						if(DATE_FORMAT.parse(t.deadlineDate).after(date)) {
-							targetCompleted(t);
+							targetCompleted(t, true);
 						}
+						else targetCompleted(t, false);
 					} catch (ParseException e) {
 					}
 				}
@@ -241,8 +247,9 @@ public class Targets extends Application {
 					Date date = Calendar.getInstance().getTime();
 					try {
 						if(DATE_FORMAT.parse(t.deadlineDate).after(date)) {
-							targetCompleted(t);
+							targetCompleted(t, true);
 						}
+						else targetCompleted(t, false);
 					} catch (ParseException e) {
 					}
 				}
@@ -250,26 +257,67 @@ public class Targets extends Application {
 		}
 	}
 
-	private static void targetCompleted(storage.targetData target) {
+	private static void targetCompleted(storage.targetData target, Boolean completedOnTime) {
 		Alert dialog = new Alert(AlertType.INFORMATION);
-		dialog.setTitle("Information Dialog");
-		dialog.setHeaderText(null);
-		dialog.setContentText("I have a great message for you!");
-
-		dialog.showAndWait();
+		dialog.setTitle("Target Completed");
+		
+		if(completedOnTime) dialog.setHeaderText("A target has been completed on time");
+		else dialog.setHeaderText("A target has been completed after the deadline date");
+		
+		if(target.targetType == 1) dialog.setContentText("Target completed: Read " + target.targetValue + " pages of the book " + getBookTitle(target.bookID) + " by " + target.deadlineDate + ".");
+		else if(target.targetType == 2) dialog.setContentText("Target completed:\nRead " + target.targetValue + " pages across all books by " + target.deadlineDate + ".");
+		else if(target.targetType == 3) dialog.setContentText("Target completed:\nRead " + target.targetValue + " books by " + target.deadlineDate + ".");
+		
+		dialog.showAndWait(); //the dialog must be confirmed before continuing
 	}
 
 	@Override
 	public void start(Stage mainStage) throws Exception {
-		createAddATargetUI();
-		setupHandles();
+		//createAddATargetUI();
+		//setupHandles();
+		viewTargetsTable();
 
-		primaryScene = new Scene(primaryGroup, 560, 360);
+		primaryScene = new Scene(primaryGroup, 600, 350);
 		mainStage.setScene(primaryScene);
 		mainStage.show();
 	}
 
 	public static void main(String args[]) {
 		launch(args);
+	}
+	
+	/**
+	 * TODO - PUT THESE INTO OTHER CLASSES:
+	 */
+	
+	public static int getBookID(String bookTitle) {
+		for(storage.bookData b : alldata.bookStore) {
+			if(b.title == bookTitle) return b.bookID;
+		}
+		return 0; //indicates error
+	}
+	
+	public static String getBookTitle(int bookID) {
+		for(storage.bookData b : alldata.bookStore) {
+			if(b.bookID == bookID) return b.title;
+		}
+		return null; //indicates error
+	}
+	
+	//isBookCounter: true - gets highest bookID in use, false - gets highest targetID in use
+	//So, the next ID to use must be: getHighestCounter(true/false) + 1
+	public static int getHighestCounter(Boolean isBookCounter) {
+		int counter = 0;
+		if(isBookCounter) {
+			for(storage.bookData b : alldata.bookStore) {
+				if(b.bookID > counter) counter = b.bookID;
+			}
+		}
+		else {
+			for(storage.targetData t : alldata.targetStore) {
+				if(t.targetID > counter) counter = t.targetID;
+			}
+		}
+		return counter;
 	}
 }

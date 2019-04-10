@@ -83,6 +83,19 @@ public class MAIN extends Application {
 		return toReturn;
 	};
 	
+	public static int getBookID(String bookTitle) {
+		for(storage.bookData b : alldata.bookStore) {
+			if(b.title == bookTitle) return b.bookID;
+		}
+		return 0; //indicates error
+	}
+	
+	public static String getBookTitle(int bookID) {
+		for(storage.bookData b : alldata.bookStore) {
+			if(b.bookID == bookID) return b.title;
+		}
+		return null; //indicates error
+	}
 	
 	public static storage.bookData getSpecificBook(String booktitle) {
 		

@@ -174,6 +174,8 @@ public class MAIN extends Application {
 		
 		targets.setOnAction(e->{
 			//Targets x = new Targets(mainScene);
+			Targets x = new Targets();
+			
 		});
 		
 	}
@@ -208,10 +210,11 @@ public class MAIN extends Application {
 		try {
 			alldata.bookStore = storageObj.retrieveBookData();
 			tempStore = storageObj.retrieveUserData();
+			alldata.targetStore = storageObj.retrieveTargetData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		MAIN.username = "username";
+		MAIN.username = "user";
 	
 		for(storage.userData item: tempStore) {
 			if(item.username.compareTo(MAIN.username) == 0) {

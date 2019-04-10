@@ -30,7 +30,7 @@ import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 
-public class Targets extends Application {
+public class Targets{
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private final ComboBox<String> targetTypeBox = new ComboBox<>();
@@ -271,20 +271,17 @@ public class Targets extends Application {
 		dialog.showAndWait(); //the dialog must be confirmed before continuing
 	}
 
-	@Override
-	public void start(Stage mainStage) throws Exception {
+	public Targets() {
 		//createAddATargetUI();
-		//setupHandles();
-		viewTargetsTable();
+				//setupHandles();
+				viewTargetsTable();
 
-		primaryScene = new Scene(primaryGroup, 600, 350);
-		mainStage.setScene(primaryScene);
-		mainStage.show();
+				primaryScene = new Scene(primaryGroup, 600, 350);
+				MAIN.mainStage.setScene(primaryScene);
 	}
+	
+	
 
-	public static void main(String args[]) {
-		launch(args);
-	}
 	
 	/**
 	 * TODO - PUT THESE INTO OTHER CLASSES:

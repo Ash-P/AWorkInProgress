@@ -5,7 +5,7 @@ import java.util.*;
 public class store implements storage{
 	//store names of files to be used, user names, books and targets
 	private String bookStoreFileName = "";
-	private String userStoreFileName = "userStoreTextFile.txt";
+	private String userStoreFileName = "userStore.txt";
 	private String targetStoreFileName = "";
 
 	//store the files themselves

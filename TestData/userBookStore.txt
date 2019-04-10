@@ -1,0 +1,4 @@
+1 ; 0 ; Frankenstein ; 352 ; 25-12-2017 ; 02-03-2019 ; 29-03-2019 ; Mary Shelley ; Penguin Classics ; 2003 ; Horror/Thriller ; ISBN: 978-0141439471 ; 352 ; 02-03-2019,100 14-03-2019,110 29-03-2019,142
+2 ; 0 ; Romeo and Juliet ; 176 ; 04-09-2018 ; 04-09-2018 ; 17-10-2018 ; William Shakespeare ; OUP Oxford ; 2008 ; Romance/Tragedy ; ISBN: 978-0198321668 ; 176 ; 04-09-2018,70 11-09-2018,60 17-10-2018,46
+3 ; 1 ; Animal Farm ; 144 ; 25-12-2018 ; 05-02-2019 ;  ; George Orwell ; Penguin Classics ; 2000 ; Political satire ; ISBN: 978-0141182704 ; 25 ; 05-02-2019,25
+4 ; 2 ; And Then There Were None ; 224 ; 30-03-2019 ;  ;  ; Agatha Christie ; HarperCollins ; 2007 ; Mystery ; ISBN: 978-0007136834 ; 0 ; 

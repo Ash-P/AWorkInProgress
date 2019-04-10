@@ -106,7 +106,7 @@ public class LoginGUI extends Application implements EventHandler<ActionEvent> {
         for (String line : fileLines) {
             boolean isPresent = line.contains(Username);
             if(isPresent) {
-                displayWindow("Name Found");
+                displayWindow("Name Found");//This can be replaced with open main menu
                 found = true;
                 break;
             }
@@ -116,7 +116,7 @@ public class LoginGUI extends Application implements EventHandler<ActionEvent> {
         }
 
         if(!found)
-            displayWindow("Name not found");
+            displayWindow("Name not found");//This can be expanded to allow user to create a file/account
 
     }
 

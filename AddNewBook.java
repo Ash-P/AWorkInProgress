@@ -206,7 +206,7 @@ public class AddNewBook extends Application {
 	// Setup all action handles
 	private void setupHandles() {
 		addPreviouslyReadPagesBtn.setOnAction(e->{
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
 			//dateRead.getValue().format();
 			
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -248,12 +248,13 @@ public class AddNewBook extends Application {
 				storage.bookData newBook = new storage.bookData();
 				
 				if(previouslyReadBtn.getValue() == "Distribute evenly") {
-					
+					distributeEvenly();
 				}
 				
 				
+				
 				newBook.author = bookAuthorTxt.getText();
-				int ID = alldata.bookStore.get(alldata.bookStore.size()-1).bookID;
+				int ID = alldata.bookStore.get(alldata.bookStore.size()-1).bookID + 1;
 				newBook.bookID = ID;
 				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 				Date date = new Date();
@@ -269,6 +270,14 @@ public class AddNewBook extends Application {
 				newBook.status = Integer.parseInt(status.getValue());
 				newBook.title = bookTitleTxt.getText();
 				newBook.description = bookDescriptionTxt.getText();
+				
+				if((newBook.status == 0 || newBook.status == 1) && newBook.pages == Integer.parseInt(newBook.pagesRead)) {
+					Targets.updateTargets(Integer.parseInt(newBook.pagesRead), newBook.bookID, true);
+				}else if((newBook.status == 0 || newBook.status == 1) && newBook.pages != Integer.parseInt(newBook.pagesRead)) {
+					Targets.updateTargets(Integer.parseInt(newBook.pagesRead), newBook.bookID, false);
+				}
+				
+				
 				
 				alldata.bookStore.add(newBook);
 			}
@@ -299,12 +308,8 @@ public class AddNewBook extends Application {
 					validData = true;
 					bookTitleTxt.setStyle("-fx-text-inner-color: black;");
 				}
-		
 			}
-			
-		});
-		
-		
+		});	
 	}
 
 	
@@ -319,14 +324,14 @@ public class AddNewBook extends Application {
 			int pagesOnEachDay = Integer.parseInt(pagesReadTxt.getText()) / days;
 			
 			DateTime current_day = new DateTime(dateS);
-			while(current_day. != dateE) {
-				
+			
+			while(!(current_day.isEqual(dateE))) {
+				current_day = current_day.plusDays(1);
+				System.out.println(current_day);
 			}
-			
-			
-			
 		}
 	}
+	
 	
 	
 	// Invert visibility of nodes passed within parameter
@@ -340,6 +345,8 @@ public class AddNewBook extends Application {
 		}
 	}
 
+	
+	
 	@Override
 	public void start(Stage mainStage) throws Exception {
 

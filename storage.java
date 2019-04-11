@@ -109,7 +109,7 @@ public interface storage {
 			}
 		}
 		
-		public String getDeadLineDate() {
+		public String getDeadlineDate() {
 			return deadlineDate;
 		}
 		

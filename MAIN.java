@@ -24,8 +24,10 @@ import java.util.Date;
 //TODO: CHANGE MENUS
 //TODO: ACHIEVEMENTS
 //TODO: VIEW BOOKS
-//TODO: TARGETS
-//TODO: Average pages in add new book
+//TODO: Average pages in add new book 
+//TODO: Save functionality
+//TODO: Back
+//TODO: Reading progress update UI+functionality
 
 public class MAIN extends Application {
 	
@@ -43,22 +45,36 @@ public class MAIN extends Application {
 	public static Button targets = new Button("Targets");
 	public static Button achievements = new Button("Achievements");
 	public static Button back = new Button("Logout");
+	public static Button save = new Button("Save");
 	
+	public static ArrayList<storage.userData> allusers = new ArrayList<>();
 	
-	
-	
-	
+	public static void saveData() {
+		storageObj.storeBookData(alldata.bookStore);
+		int i = 0;
+		for(storage.userData user: allusers) {
+			i++;
+			if(user.userID == alldata.userStore.userID) {
+				allusers.set(i, alldata.userStore);
+				storageObj.storeUserData(allusers);
+				break;
+			}
+		}
+		storageObj.storeTargetData(alldata.targetStore);
+	}
 	
 	public static Map<String, Integer> getBooksRead(){
 		Map<String, Integer> toReturn = new HashMap<String,Integer>();
 		String data = alldata.userStore.booksCompletedOnADate;
 		//System.out.println(data);
 		//String data = "17-10-2013,5 29-03-2016,4 30-03-2017,8 31-03-2010,2";
+		System.out.println(data);
 		String[] tokens = data.split(" ", -1);
 		for(int i=0;i<tokens.length;i++) {
 			String[] x = tokens[i].split(",", 2);
 			toReturn.put(x[0],Integer.parseInt(x[1]));
 		}
+		System.out.println(data);
 		return toReturn;	
 	}
 
@@ -116,6 +132,9 @@ public class MAIN extends Application {
 		//570 for save button
 		back.setLayoutX(20);
 		back.setLayoutY(278);
+		
+		save.setLayoutX(570);
+		save.setLayoutY(278);
 		//
 		viewTrackingData.setStyle("-fx-font: 15px Tahoma;");
 		manageBooks.setStyle("-fx-font: 15px Tahoma;");
@@ -144,7 +163,7 @@ public class MAIN extends Application {
 		achievements.setLayoutY(140);
 		
 		setupHandles();
-		Group root = new Group(back, viewTrackingData, manageBooks,targets, achievements, title);
+		Group root = new Group(save, back, viewTrackingData, manageBooks,targets, achievements, title);
 		Scene mainScene = new Scene(root, 640, 320);
 		mainStage.setScene(mainScene);
 		mainStage.show();
@@ -153,6 +172,7 @@ public class MAIN extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		
 		// TODO Auto-generated method stub
 		
 		//storageObj = new store(name);
@@ -163,65 +183,57 @@ public class MAIN extends Application {
 	
 	static void setupHandles() {
 		
-		viewTrackingData.setOnAction(e->{
-			DisplayChart x = new DisplayChart();
-			//ViewTrackingData x = new ViewTrackingData(mainScene);
-		});
-		
-		viewTrackingData.setOnAction(e->{
-			ViewBookData x = new ViewBookData(mainScene);
-		});
-		
-		targets.setOnAction(e->{
-			//Targets x = new Targets(mainScene);
-			Targets x = new Targets();
+		save.setOnAction(e->{
+			
+			MAIN.saveData();
+			
+			
 			
 		});
 		
+		
+		viewTrackingData.setOnAction(e->{
+			ViewTrackingDataMenu.instantiate();
+			//ViewTrackingDataMenu.instantiate();
+			//DisplayChart x = new DisplayChart();
+			//ViewTrackingData x = new ViewTrackingData(mainScene);
+		});
+		
+		
+		targets.setOnAction(e->{
+			//Targets x = new Targets(mainScene);
+			TargetsMenu.instantiate();
+			
+		});
+		manageBooks.setOnAction(e->{
+			
+			manageBooksMenu.instantiate();
+			
+		});
 	}
 	
 	
 	public static void main(String args[]) {
-		//Map<String, Integer> toReturn = getBooksRead();
-		/*String x = "05-04-2014";
-		 SimpleDateFormat formatter2 = new SimpleDateFormat("dd-MM-yyyy");
-		 Date y = null;
-		try {
-			y = formatter2.parse(x);
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(y);
-		int year = cal.get(Calendar.YEAR);
-		int month = cal.get(Calendar.MONTH);
-		int day = cal.get(Calendar.DAY_OF_MONTH);
-		
-		System.out.println(day);
-		
-		*/
 		
 		//MAIN.name = "user";
 		storageObj = new store("user");
-		ArrayList<storage.userData> tempStore = null;
 		try {
 			alldata.bookStore = storageObj.retrieveBookData();
-			tempStore = storageObj.retrieveUserData();
+			allusers = storageObj.retrieveUserData();
 			alldata.targetStore = storageObj.retrieveTargetData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		MAIN.username = "user";
 	
-		for(storage.userData item: tempStore) {
+		for(storage.userData item: allusers) {
 			if(item.username.compareTo(MAIN.username) == 0) {
 				alldata.userStore = item;				
 			}
 		}
 		
+		
+	
 		launch(args);
 		
 	

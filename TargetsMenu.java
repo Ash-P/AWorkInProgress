@@ -5,11 +5,10 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-public class ViewTrackingDataMenu {
-
-	public static Label title = new Label("View Tracking Data");
-	public static Button graphs = new Button("Graphs");
-	public static Button statistics = new Button("Statistics");
+public class TargetsMenu {
+	public static Label title = new Label("Targets");
+	public static Button addTarget = new Button("Add a Target");
+	public static Button viewTargets = new Button("View Targets");
 	public static Button save = new Button("Save");
 	public static Button back = new Button("Back");
 
@@ -27,23 +26,23 @@ public class ViewTrackingDataMenu {
 		save.setLayoutX(570);
 		save.setLayoutY(278);
 		//
-		graphs.setStyle("-fx-font: 15px Tahoma;");
-		statistics.setStyle("-fx-font: 15px Tahoma;");
+		addTarget.setStyle("-fx-font: 15px Tahoma;");
+		viewTargets.setStyle("-fx-font: 15px Tahoma;");
 
 		//
-		graphs.setPrefWidth(200);
-		graphs.setPrefHeight(80);
-		graphs.setLayoutX(120);
-		graphs.setLayoutY(120);
+		addTarget.setPrefWidth(200);
+		addTarget.setPrefHeight(80);
+		addTarget.setLayoutX(120);
+		addTarget.setLayoutY(120);
 		//
-		statistics.setPrefWidth(200);
-		statistics.setPrefHeight(80);
-		statistics.setLayoutX(320);
-		statistics.setLayoutY(120);
+		viewTargets.setPrefWidth(200);
+		viewTargets.setPrefHeight(80);
+		viewTargets.setLayoutX(320);
+		viewTargets.setLayoutY(120);
 		//
 		setupHandles();
 
-		Group root = new Group(save, back, graphs, statistics, title);
+		Group root = new Group(save, back, addTarget, viewTargets, title);
 		Scene mainScene = new Scene(root, 640, 320);
 		MAIN.mainStage.setScene(mainScene);
 
@@ -52,17 +51,13 @@ public class ViewTrackingDataMenu {
 	static void setupHandles() {
 
 		save.setOnAction(e -> {
-
 			MAIN.saveData();
-
 		});
 		back.setOnAction(e -> {
 			MAIN.instantiate();
 		});
 
-		graphs.setOnAction(e -> {
-			
-			DisplayChart graph = new DisplayChart();
+		addTarget.setOnAction(e -> {	
 			
 		});
 	}

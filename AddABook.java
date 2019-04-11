@@ -282,10 +282,10 @@ public class AddABook {
 				
 				newBook.bookID = alldata.bookStore.get(alldata.bookStore.size()-1).bookID + 1;
 				newBook.dateAdded = DATE_FORMAT.format(new Date());
-				
-				if(statusBox.getValue() == ) newBook.status = 0;
-				else if(statusBox.getValue() == ) newBook.status = 1;
-				else if(statusBox.getValue() == ) newBook.status = 2;
+
+				if(statusBox.getValue() == "Read Previously") newBook.status = 0;
+				else if(statusBox.getValue() == "Currently Reading") newBook.status = 1;
+				else if(statusBox.getValue() == "Want to Read") newBook.status = 2;
 				newBook.title = bookTitleTxt.getText();
 				newBook.pages = Integer.parseInt(bookPagesTxt.getText());
 				newBook.dateStarted = dateStarted.getValue().toString();

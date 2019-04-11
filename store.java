@@ -113,7 +113,7 @@ public class store implements storage{
 			bookdata.publicationYear = properties[9];
 			bookdata.genre = properties[10];
 			bookdata.description = properties[11];
-			bookdata.pagesRead = properties[12];
+			bookdata.pagesRead = Integer.parseInt(properties[12]);
 			try {
 			bookdata.pagesReadOnADate = properties[13];
 			}catch(Exception e) {

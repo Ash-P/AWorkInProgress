@@ -28,6 +28,8 @@ import org.joda.time.*;
 // Move author genre to additional info, publisher, store all additional info under Description, 
 public class AddABook {
 
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private boolean validData = true;
 	
 	//ESSENTIAL
@@ -278,25 +280,25 @@ public class AddABook {
 					distributeEvenly();
 				}
 				
+				newBook.bookID = alldata.bookStore.get(alldata.bookStore.size()-1).bookID + 1;
+				newBook.dateAdded = DATE_FORMAT.format(new Date());
 				
+				if(statusBox.getValue() == ) newBook.status = 0;
+				else if(statusBox.getValue() == ) newBook.status = 1;
+				else if(statusBox.getValue() == ) newBook.status = 2;
+				newBook.title = bookTitleTxt.getText();
+				newBook.pages = Integer.parseInt(bookPagesTxt.getText());
+				newBook.dateStarted = dateStarted.getValue().toString();
+				newBook.dateCompleted = dateCompleted.getValue().toString();
+				newBook.pagesRead = Integer.parseInt(pagesReadTxt.getText());
 				
 				newBook.author = bookAuthorTxt.getText();
-				int ID = alldata.bookStore.get(alldata.bookStore.size()-1).bookID + 1;
-				newBook.bookID = ID;
-				DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-				Date date = new Date();
-				newBook.dateAdded = dateFormat.format(date);
-				newBook.dateCompleted = dateCompleted.getValue().toString();
-				newBook.dateStarted = dateStarted.getValue().toString();
-				newBook.genre = bookGenreTxt.getText();
-				newBook.pages = Integer.parseInt(bookPagesTxt.getText());
-				newBook.publicationYear = bookPublicationYear.getText();
-				newBook.pagesRead = Integer.parseInt(pagesReadTxt.getText());
-				newBook.pagesReadOnADate = pagesOnDateToStore.toString();
 				newBook.publisher = bookPublisherTxt.getText();
-				newBook.status = Integer.parseInt(statusBox.getValue());
-				newBook.title = bookTitleTxt.getText();
+				newBook.publicationYear = bookPublicationYear.getText();
+				newBook.genre = bookGenreTxt.getText();
 				newBook.description = bookDescriptionTxt.getText();
+				
+				newBook.pagesReadOnADate = pagesOnDateToStore.toString();
 				
 				if(newBook.status == 0 || newBook.status == 1) {
 					if(newBook.pages == newBook.pagesRead) AddATarget.updateTargets(newBook.pagesRead, newBook.bookID, true);

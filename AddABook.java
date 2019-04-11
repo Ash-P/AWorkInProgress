@@ -307,27 +307,6 @@ public class AddABook {
 			}
 
 		});
-		
-		/*
-		private final ComboBox<String> statusBox = new ComboBox<>();
-		private final TextField bookTitleTxt = new TextField();
-		private final TextField bookPagesTxt = new TextField();
-		private final DatePicker dateStarted = new DatePicker();
-		private final DatePicker dateCompleted = new DatePicker();
-		private final TextField pagesReadTxt = new TextField();
-		//PREVIOUSLY READ PAGES
-		private final ComboBox<String> previouslyReadBox = new ComboBox<>();
-		private final DatePicker dateRead = new DatePicker();
-		private final TextField pagesOnDate = new TextField();
-		private final Button addPreviouslyReadPagesBtn = new Button();
-		//OPTIONAL
-		private final Button additionalBookInfoBtn = new Button();
-		private final TextField bookAuthorTxt = new TextField();
-		private final TextField bookPublisherTxt = new TextField();
-		private final TextField bookPublicationYear = new TextField();
-		private final TextField bookGenreTxt = new TextField();
-		private final TextArea bookDescriptionTxt = new TextArea();
-		*/
 			
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

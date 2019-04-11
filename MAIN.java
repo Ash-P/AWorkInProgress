@@ -120,7 +120,6 @@ public class MAIN extends Application {
 				return item;
 			}
 		}
-		
 		return null;
 	}
 	
@@ -132,25 +131,25 @@ public class MAIN extends Application {
 		//570 for save button
 		back.setLayoutX(20);
 		back.setLayoutY(278);
-		
+		//
 		save.setLayoutX(570);
 		save.setLayoutY(278);
 		//
 		viewTrackingData.setStyle("-fx-font: 15px Tahoma;");
 		manageBooks.setStyle("-fx-font: 15px Tahoma;");
-		
+		//
 		targets.setStyle("-fx-font: 15px Tahoma;");
 		achievements.setStyle("-fx-font: 15px Tahoma;");
 		//
-		viewTrackingData.setPrefWidth(200);
-		viewTrackingData.setPrefHeight(80);
-		viewTrackingData.setLayoutX(120);
-		viewTrackingData.setLayoutY(60);
-		//
 		manageBooks.setPrefWidth(200);
 		manageBooks.setPrefHeight(80);
-		manageBooks.setLayoutX(320);
+		manageBooks.setLayoutX(120);
 		manageBooks.setLayoutY(60);
+		//
+		viewTrackingData.setPrefWidth(200);
+		viewTrackingData.setPrefHeight(80);
+		viewTrackingData.setLayoutX(320);
+		viewTrackingData.setLayoutY(60);
 		//
 		targets.setPrefWidth(200);		
 		targets.setPrefHeight(80);
@@ -163,7 +162,7 @@ public class MAIN extends Application {
 		achievements.setLayoutY(140);
 		
 		setupHandles();
-		Group root = new Group(save, back, viewTrackingData, manageBooks,targets, achievements, title);
+		Group root = new Group(manageBooks, viewTrackingData, targets, achievements, back, save, title);
 		Scene mainScene = new Scene(root, 640, 320);
 		mainStage.setScene(mainScene);
 		mainStage.show();
@@ -183,32 +182,24 @@ public class MAIN extends Application {
 	
 	static void setupHandles() {
 		
-		save.setOnAction(e->{
-			
-			MAIN.saveData();
-			
-			
-			
+		manageBooks.setOnAction(e->{
+			ManageBooksMenu.instantiate();
 		});
-		
 		
 		viewTrackingData.setOnAction(e->{
 			ViewTrackingDataMenu.instantiate();
-			//ViewTrackingDataMenu.instantiate();
-			//DisplayChart x = new DisplayChart();
-			//ViewTrackingData x = new ViewTrackingData(mainScene);
 		});
-		
 		
 		targets.setOnAction(e->{
-			//Targets x = new Targets(mainScene);
-			TargetsMenu.instantiate();
-			
+			TargetsMenu.instantiate();	
 		});
-		manageBooks.setOnAction(e->{
-			
-			manageBooksMenu.instantiate();
-			
+		
+		achievements.setOnAction(e->{
+			//Achievements x = new Achievements();
+		});
+		
+		save.setOnAction(e->{	
+			MAIN.saveData();
 		});
 	}
 	

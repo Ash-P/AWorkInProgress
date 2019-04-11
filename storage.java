@@ -88,31 +88,18 @@ public interface storage {
 		int valueRemaining;
 		
 		public String getTargetType() {
-			if(targetType == 1) {
-				return "Pages of the book " + MAIN.getBookTitle(bookID);
-			}
-			if(targetType == 2) {
-				return "Pages across all books";
-			}
-			if(targetType == 3) {
-				return "Books";
-			}
-			
+			if(targetType == 1) return "Pages of the book " + MAIN.getBookTitle(bookID);
+			if(targetType == 2) return "Pages across all books";
+			if(targetType == 3) return "Books";
 			return null;
 		}
-		
 		public String getIsComplete() {
-			if (isComplete == false) {
-				return "No";
-			}else {
-				return "Yes";
-			}
+			if(isComplete) return "Yes";
+			else return "No";
 		}
-		
 		public String getDeadlineDate() {
 			return deadlineDate;
 		}
-		
 		public int getTargetValue() {
 			return targetValue;
 		}

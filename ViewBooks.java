@@ -8,13 +8,15 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 
+import java.util.Arrays;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
-public class ViewBookData {
+public class ViewBooks {
 	public Label title = new Label("View Book Data");
 	public Button back = new Button("Back");
 	public ComboBox<String> categoryComboBox = new ComboBox<>();
@@ -22,10 +24,12 @@ public class ViewBookData {
 
 	public TableView<storage.bookData> bookTable = new TableView<>();
 
-	ViewBookData() {
+	public ViewBooks() {
 		categoryComboBox.setPromptText("Category");
+		categoryComboBox.getItems().add("Status");
 		categoryComboBox.getItems().add("Author");
 		categoryComboBox.getItems().add("Publisher");
+		categoryComboBox.getItems().add("Genre");
 
 		TableColumn<storage.bookData, Integer> bookStatus = new TableColumn<>("Status");
 		bookStatus.setMaxWidth(40);
@@ -38,7 +42,7 @@ public class ViewBookData {
 		TableColumn<storage.bookData, Integer> bookPages = new TableColumn<>("Book Pages");
 		bookPages.setCellValueFactory(new PropertyValueFactory<>("pages"));
 
-		TableColumn<storage.bookData, String> bookPagesRead = new TableColumn<>("Pages Read");
+		TableColumn<storage.bookData, Integer> bookPagesRead = new TableColumn<>("Pages Read");
 		bookPagesRead.setCellValueFactory(new PropertyValueFactory<>("pagesRead"));
 
 		TableColumn<storage.bookData, String> bookDateAdded = new TableColumn<>("Date Added");
@@ -70,8 +74,8 @@ public class ViewBookData {
 
 		// TableView<storage.bookData> bookTable = new TableView<>();
 		bookTable.setItems(getBooks());
-		bookTable.getColumns().addAll(bookStatus, bookName, bookPages, bookPagesRead, bookDateAdded, bookDateStarted,
-				bookDateCompleted, bookAuthor, bookPublisher, bookPublishYear, bookGenre, bookDescription);
+		bookTable.getColumns().addAll( Arrays.asList(bookStatus, bookName, bookPages, bookPagesRead, bookDateAdded, bookDateStarted,
+				bookDateCompleted, bookAuthor, bookPublisher, bookPublishYear, bookGenre, bookDescription) );
 
 		// bookTable.getColumns().addAll(bookStatus);
 
@@ -129,14 +133,21 @@ public class ViewBookData {
 			items.getItems().clear();
 			bookTable.setItems(getBooks());
 			
-			if (categoryComboBox.getValue() == "Author") {
+			if (categoryComboBox.getValue() == "Status") {
 				for (storage.bookData book : alldata.bookStore) {
-					items.getItems().add(book.author);
+					if(book.status == 0) items.getItems().add("Previous");
+					else if(book.status == 1) items.getItems().add("Current");
+					else if(book.status == 2) items.getItems().add("Future");
 				}
-			} else if (categoryComboBox.getValue() == "Publisher") {
-				for (storage.bookData book : alldata.bookStore) {
-					items.getItems().add(book.publisher);
-				}
+			}
+			else if (categoryComboBox.getValue() == "Author") {
+				for (storage.bookData book : alldata.bookStore) items.getItems().add(book.author);
+			}
+			else if (categoryComboBox.getValue() == "Publisher") {
+				for (storage.bookData book : alldata.bookStore) items.getItems().add(book.publisher);
+			}
+			else if (categoryComboBox.getValue() == "Genre") {
+				for (storage.bookData book : alldata.bookStore) items.getItems().add(book.genre);
 			}
 
 		});

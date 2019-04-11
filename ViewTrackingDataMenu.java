@@ -1,3 +1,5 @@
+import com.sun.corba.se.spi.monitoring.StatisticsAccumulator;
+
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -20,7 +22,6 @@ public class ViewTrackingDataMenu {
 		title.setLayoutX(240);
 		title.setLayoutY(15);
 
-		// 570 for save button
 		back.setLayoutX(20);
 		back.setLayoutY(278);
 
@@ -43,7 +44,7 @@ public class ViewTrackingDataMenu {
 		//
 		setupHandles();
 
-		Group root = new Group(save, back, graphs, statistics, title);
+		Group root = new Group(graphs, statistics, back, save, title);
 		Scene mainScene = new Scene(root, 640, 320);
 		MAIN.mainStage.setScene(mainScene);
 
@@ -51,19 +52,21 @@ public class ViewTrackingDataMenu {
 
 	static void setupHandles() {
 
-		save.setOnAction(e -> {
-
-			MAIN.saveData();
-
+		graphs.setOnAction(e -> {
+			DisplayChart graph = new DisplayChart();
 		});
+		
+		statistics.setOnAction(e -> {
+			ViewStatistics viewStatsObj = new ViewStatistics();
+		});
+		
 		back.setOnAction(e -> {
 			MAIN.instantiate();
 		});
-
-		graphs.setOnAction(e -> {
-			
-			DisplayChart graph = new DisplayChart();
-			
+		
+		save.setOnAction(e -> {
+			MAIN.saveData();
 		});
+		
 	}
 }

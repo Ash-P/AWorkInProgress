@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;  
 
-//TODO: CHANGE MENUS
 //TODO: ACHIEVEMENTS
-//TODO: VIEW BOOKS
 //TODO: Average pages in add new book 
 //TODO: Save functionality
 //TODO: Back
@@ -50,13 +48,16 @@ public class MAIN extends Application {
 	
 	public static ArrayList<storage.userData> allusers = new ArrayList<>();
 	
+	
+	
+	
 	public static void saveData() {
 		storageObj.storeBookData(alldata.bookStore);
-		int i = 0;
+		
 		for(storage.userData user: allusers) {
-			i++;
 			if(user.userID == alldata.userStore.userID) {
-				allusers.set(i, alldata.userStore);
+				int indexToReplace = allusers.indexOf(user);
+				allusers.set(indexToReplace, alldata.userStore);
 				storageObj.storeUserData(allusers);
 				break;
 			}
@@ -99,6 +100,8 @@ public class MAIN extends Application {
 		
 		return toReturn;
 	};
+	
+	
 	
 	public static int getBookID(String bookTitle) {
 		for(storage.bookData b : alldata.bookStore) {
@@ -161,7 +164,7 @@ public class MAIN extends Application {
 		achievements.setPrefHeight(80);
 		achievements.setLayoutX(320);
 		achievements.setLayoutY(140);
-		
+		mainStage.getIcons().add(new Image("file:icon.png"));
 		setupHandles();
 		Group root = new Group(manageBooks, viewTrackingData, targets, achievements, back, save, title);
 		Scene mainScene = new Scene(root, 640, 320);
@@ -176,10 +179,15 @@ public class MAIN extends Application {
 		// TODO Auto-generated method stub
 		
 		//storageObj = new store(name);
-		stage.getIcons().add(new Image("file:icon.png"));
+		
 		mainStage = stage;
 		instantiate();
+		LoginGUI.instantiate();
+		
+		//instantiate();
 	}
+	
+
 	
 	static void setupHandles() {
 		
@@ -204,11 +212,31 @@ public class MAIN extends Application {
 		});
 	}
 	
+	public static void begin(String username) {
+		MAIN.username = username;
+		
+		storageObj = new store(MAIN.username);
+		try {
+			alldata.bookStore = storageObj.retrieveBookData();
+			allusers = storageObj.retrieveUserData();
+			alldata.targetStore = storageObj.retrieveTargetData();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+		for(storage.userData item: allusers) {
+			if(item.username.compareTo(MAIN.username) == 0) {
+				alldata.userStore = item;				
+			}
+		}
+		instantiate();
+	}
+	
 	
 	public static void main(String args[]) {
 		
 		//MAIN.name = "user";
-		storageObj = new store("user");
+		/*storageObj = new store("user");
 		try {
 			alldata.bookStore = storageObj.retrieveBookData();
 			allusers = storageObj.retrieveUserData();
@@ -222,7 +250,7 @@ public class MAIN extends Application {
 			if(item.username.compareTo(MAIN.username) == 0) {
 				alldata.userStore = item;				
 			}
-		}
+		}*/
 		
 		
 	

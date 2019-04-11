@@ -31,8 +31,8 @@ public class ViewBooks {
 		categoryComboBox.getItems().add("Publisher");
 		categoryComboBox.getItems().add("Genre");
 
-		TableColumn<storage.bookData, Integer> bookStatus = new TableColumn<>("Status");
-		bookStatus.setMaxWidth(40);
+		TableColumn<storage.bookData, String> bookStatus = new TableColumn<>("Status");
+		bookStatus.setMinWidth(110);
 		bookStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
 		TableColumn<storage.bookData, String> bookName = new TableColumn<>("Title");
@@ -125,6 +125,28 @@ public class ViewBooks {
 		return books;
 	}
 	
+	public ObservableList<storage.bookData> getBooksByStatus(int status) {
+		ObservableList<storage.bookData> books = FXCollections.observableArrayList();
+		for (storage.bookData item : alldata.bookStore) {
+			if (item.status == status) {
+				books.add(item);
+			}
+		}
+
+		return books;
+	}
+	
+	public ObservableList<storage.bookData> getBooksByGenre(String genre) {
+		ObservableList<storage.bookData> books = FXCollections.observableArrayList();
+		for (storage.bookData item : alldata.bookStore) {
+			if (item.genre == genre) {
+				books.add(item);
+			}
+		}
+
+		return books;
+	}
+	
 	void setupHandles() {
 
 		categoryComboBox.setOnAction(e -> {
@@ -134,11 +156,7 @@ public class ViewBooks {
 			bookTable.setItems(getBooks());
 			
 			if (categoryComboBox.getValue() == "Status") {
-				for (storage.bookData book : alldata.bookStore) {
-					if(book.status == 0) items.getItems().add("Previous");
-					else if(book.status == 1) items.getItems().add("Current");
-					else if(book.status == 2) items.getItems().add("Future");
-				}
+				items.getItems().addAll("Read Previously", "Currently Reading", "Want to Read");
 			}
 			else if (categoryComboBox.getValue() == "Author") {
 				for (storage.bookData book : alldata.bookStore) items.getItems().add(book.author);
@@ -149,6 +167,7 @@ public class ViewBooks {
 			else if (categoryComboBox.getValue() == "Genre") {
 				for (storage.bookData book : alldata.bookStore) items.getItems().add(book.genre);
 			}
+			
 
 		});
 
@@ -162,6 +181,17 @@ public class ViewBooks {
 				bookTable.getItems().clear();
 				bookTable.setItems(getBooksByPublisher(items.getValue()));
 			}
+			else if(categoryComboBox.getValue() == "Status") {
+				bookTable.getItems().clear();
+				if(items.getValue() == "Read Previously") { bookTable.setItems(getBooksByStatus(0));}
+				if(items.getValue() == "Currently Reading") {bookTable.setItems(getBooksByStatus(1));}
+				if(items.getValue() == "Want to Read") {bookTable.setItems(getBooksByStatus(2));}
+			}
+			else if(categoryComboBox.getValue() == "Genre") {
+				bookTable.getItems().clear();
+				bookTable.setItems(getBooksByGenre(items.getValue()));
+			}
+			
 			
 			
 		});

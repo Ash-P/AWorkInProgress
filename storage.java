@@ -37,8 +37,9 @@ public interface storage {
 		int pagesRead;
 		String pagesReadOnADate;
 		
-		public int getStatus() {
-			return status;
+		public String getStatus() {
+			if(status == 0) {return "Read Previously";}else if(status == 1) {return "Currently Reading";}
+			else{ return "Want to Read";}
 		}
 		public String getTitle() {
 			return title;

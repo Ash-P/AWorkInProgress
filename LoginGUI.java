@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,28 +17,23 @@ import java.io.*;
 import java.util.*;
 
 
-public class LoginGUI extends Application implements EventHandler<ActionEvent> {
+public class LoginGUI{
 
-    private Button button;
-    private TextField enterUser;
+    public static Button button;
+    public static TextField enterUser;
 
-    public static void  main(String[] args){
-        launch(args);
-    }
+  
+    public void LoginGUI() {
+       
 
-    @Override
-    public void start(Stage primaryStage) {
-        AnchorPane layout = new AnchorPane();
-
-        primaryStage.setTitle("Login");
-
-        Label appName = new Label("FACE IN BOOK");
+ 
+        Label appName = new Label("Face-In-Book");
         appName.setPrefHeight(159);
         appName.setPrefWidth(330);
         appName.setLayoutX(141);
-        appName.setLayoutY(92);
+        appName.setLayoutY(40);
         appName.setFont(Font.font("System", FontWeight.SEMI_BOLD,48));
-        appName.setAlignment(Pos.CENTER_LEFT);
+        appName.setAlignment(Pos.TOP_CENTER);
         appName.setPickOnBounds(true);
 
         button = new Button("Login");
@@ -49,7 +45,49 @@ public class LoginGUI extends Application implements EventHandler<ActionEvent> {
         button.setLayoutX(370);
         button.setLayoutY(276);
 
-        button.setOnAction(this);
+        enterUser = new TextField();
+        enterUser.setPromptText("Username");
+        enterUser.setFont(Font.font("System", FontWeight.NORMAL,13));
+        enterUser.setEditable(true);
+        enterUser.setAlignment(Pos.CENTER_LEFT);
+        enterUser.setPickOnBounds(true);
+        enterUser.setPrefHeight(29);
+        enterUser.setPrefWidth(200);
+        enterUser.setLayoutX(220);
+        enterUser.setLayoutY(227);
+
+        setupHandles();
+        Group root = new Group(button, appName, enterUser);
+		Scene mainScene = new Scene(root, 640, 320);
+		MAIN.mainStage.setScene(mainScene);
+		
+	
+
+
+       
+    }
+
+    public static void instantiate() {
+    	AnchorPane layout = new AnchorPane();
+
+    	 
+        Label appName = new Label("Face-In-Book");
+        appName.setPrefHeight(159);
+        appName.setPrefWidth(330);
+        appName.setLayoutX(141);
+        appName.setLayoutY(40);
+        appName.setFont(Font.font("System", FontWeight.SEMI_BOLD,48));
+        appName.setAlignment(Pos.TOP_CENTER);
+        appName.setPickOnBounds(true);
+
+        button = new Button("Login");
+        button.setFont(Font.font("System", FontWeight.NORMAL,13));
+        button.setAlignment(Pos.CENTER_LEFT);
+        button.setPickOnBounds(true);
+        button.setPrefHeight(29);
+        button.setPrefWidth(50);
+        button.setLayoutX(370);
+        button.setLayoutY(276);
 
         enterUser = new TextField();
         enterUser.setPromptText("Username");
@@ -67,28 +105,29 @@ public class LoginGUI extends Application implements EventHandler<ActionEvent> {
         layout.getChildren().add(enterUser);
 
 
-
+        setupHandles();
         Scene scene = new Scene(layout, 600,400);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        MAIN.mainStage.setScene(scene);
     }
-
-
-    @Override
-    public void handle(ActionEvent event) {
-        if(event.getSource() == button) {
-            String username = enterUser.getText();
-            System.out.println(username);
-            readFile(username);
-
-
-        }
+    
+    public static void setupHandles() {
+    	button.setOnAction(e->{
+    		
+    		
+    		   String username = enterUser.getText();
+               System.out.println(username);
+               readFile(username);
+    		
+    	});
+    	
     }
+    
+   
 
-    private void readFile(String Username){
+    public static void readFile(String Username){
         List<String> fileLines = new ArrayList<>();
 
-        File file = new File("src/File format examples.txt [Blelloch].txt");//directory
+        File file = new File("userStore.txt");//directory
         try (Scanner scanner = new Scanner(file)) {
 
             while (scanner.hasNextLine())
@@ -100,7 +139,7 @@ public class LoginGUI extends Application implements EventHandler<ActionEvent> {
         checkUsername(fileLines, Username);
     }
 
-    private void checkUsername(List<String> fileLines, String Username){
+    public static void checkUsername(List<String> fileLines, String Username){
         boolean found = false;
 
         for (String line : fileLines) {
@@ -108,6 +147,7 @@ public class LoginGUI extends Application implements EventHandler<ActionEvent> {
             if(isPresent) {
                 displayWindow("Name Found");//This can be replaced with open main menu
                 found = true;
+                MAIN.begin(Username);
                 break;
             }
 
@@ -116,11 +156,19 @@ public class LoginGUI extends Application implements EventHandler<ActionEvent> {
         }
 
         if(!found)
+        	
             displayWindow("Name not found");//This can be expanded to allow user to create a file/account
 
     }
 
-    private void displayWindow(String message){
+    public void createUser() {
+    	storage.userData newUser = new storage.userData();
+    	
+    	//newUser.
+    }
+    
+    
+    private static void displayWindow(String message){
         Stage window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);

@@ -170,7 +170,7 @@ public class store implements storage{
 		try {
 			FileWriter updateFile = new FileWriter(userStoreFile, false);
 			for(userData u : newUserData){
-				updateFile.append(u.userID+" ; "+u.username+" ; "+u.totalPagesRead+" ; "+u.totalBooksRead+" ; "+u.booksCompletedOnADate+"\n");
+				updateFile.append(u.userID+" ; "+u.username+" ; "+u.totalPagesRead+" ; "+u.totalBooksRead+" ; "+ u.pageAchievsUnlocked + " ; " + u.bookAchievsUnlocked + " ; "+u.booksCompletedOnADate+"\n");
 			}
 			updateFile.close();
 			userFileReader = new BufferedReader( new InputStreamReader( new FileInputStream(userStoreFile)));

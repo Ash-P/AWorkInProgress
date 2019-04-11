@@ -1,125 +1,58 @@
-
-
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class CreateCSV {
-	public static Map<Date, Integer> target = new HashMap<>();
+	private static final String FILENAME = "GoogleCalendarEvent.csv";
+	private static final String HEADER = "Subject,Start Date,Description\n";
+	private static final String SUBJECT = "Face-In-Book Reading Target";
+	private static final DateFormat UK_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+	private static final DateFormat US_DATE_FORMAT = new SimpleDateFormat("MM-dd-yyyy");
 	
-	
-	
-	public static void createPagesCSV(storage.targetData targetObj) {
-		String title = "Reading target";
-		String bookTitle = "";
+	public static void createCSV(storage.targetData targetObj) {
+		String description = "";
+		FileWriter fileWriter = null;
+		BufferedWriter bufferedWriter = null;
 		
-		for(storage.bookData item: alldata.bookStore) {
-			if(targetObj.bookID == item.bookID) {
-				bookTitle = item.title;
-			}
+		if(targetObj.targetType == 1) {
+			String bookTitle = MAIN.getBookTitle(targetObj.bookID);
+			storage.bookData bookObj = MAIN.getSpecificBook(bookTitle);
+			int targetValue = bookObj.pagesRead + targetObj.targetValue; //page to read to
+			if(targetValue > bookObj.pages) targetValue = bookObj.pages;
+			description = "Have read to page " + targetValue + " of " + bookTitle + ".";
 		}
-		
-		storage.bookData book = MAIN.getSpecificBook(bookTitle);
-		int readToPage;
-		
-		if(Integer.parseInt(book.pagesRead+targetObj.targetValue) > book.pages){
-			readToPage = book.pages;
-		}else{
-			readToPage = Integer.parseInt(book.pagesRead) + targetObj.targetValue;
+		else if(targetObj.targetType == 2) {
+			int targetValue = alldata.userStore.totalPagesRead + targetObj.targetValue;
+			description = "Have read " + targetValue + " pages in total.";
 		}
-		
-		
-		BufferedWriter writer = null;
-		FileWriter fw = null;
-		
-		try {
-			fw = new FileWriter("target.csv");
-			writer = new BufferedWriter(fw);
-			writer.write("Subject,Start Date,Description\n");
-			writer.write(bookTitle + "," + targetObj.deadlineDate + ", Read to page " + readToPage + " of " + book.title);
-			writer.close();
-		} catch(IOException e) {
-			System.out.println("fail");
-		}
-		
-		
-		
-	} 
-	public static void createBooksCSV(storage.targetData targetObj) {
-		
-		String title = "Reading target";
-		String bookTitle = "";
-		
-		BufferedWriter writer = null;
-		FileWriter fw = null;
-		
-		int val = alldata.userStore.totalBooksRead + targetObj.targetValue;
-		
-		for(storage.bookData item: alldata.bookStore) {
-			if(targetObj.bookID == item.bookID) {
-				bookTitle = item.title;
-			}
+		else if(targetObj.targetType == 3) {
+			int targetValue = alldata.userStore.totalBooksRead + targetObj.targetValue;
+			description = "Have read " + targetValue + " books in total.";
 		}
 		
 		try {
-			
-			fw = new FileWriter("target.csv");
-			writer = new BufferedWriter(fw);
-			writer.write("Subject,Start Date,Description\n");
-			writer.write(bookTitle + "," + targetObj.deadlineDate + ", Have read " + val + "books");
-			writer.close();
-			
-			
+			String formattedDate = US_DATE_FORMAT.format(UK_DATE_FORMAT.parse(targetObj.deadlineDate));
+			fileWriter = new FileWriter(FILENAME);
+			bufferedWriter = new BufferedWriter(fileWriter);
+			bufferedWriter.write(HEADER);
+			bufferedWriter.write(SUBJECT + "," + formattedDate + "," + description);
+			bufferedWriter.close();
+		} catch (ParseException e) {
 		} catch(IOException e) {
-			System.out.println("fail");
-			
 		}
-	} 
+	}
 	
-	
-	public static void createGeneralPagesCSV(storage.targetData targetObj) {
-		String title = "Pages target";
-		
-		String bookTitle = "";
-		BufferedWriter writer = null;
-		FileWriter fw = null;
-		
-		for(storage.bookData item: alldata.bookStore) {
-			if(targetObj.bookID == item.bookID) {
-				bookTitle = item.title;
-			}
-		}
-		int val = alldata.userStore.totalPagesRead + targetObj.targetValue;
-		
-		try {
-			
-			fw = new FileWriter("target.csv");
-			writer = new BufferedWriter(fw);
-			writer.write("Subject,Start Date,Description\n");
-			writer.write(bookTitle + "," + targetObj.deadlineDate + ", Have read " + val + "pages");
-			writer.close();
-			
-			
-		} catch(IOException e) {
-			System.out.println("fail");
-		}
-		
-		
-		
-	} 
-	
+	/*
 	public static void main(String[] args)  {
 		storage.targetData test = new storage.targetData();
-		
-		test.deadlineDate = "05/04/2020";
-		test.targetValue = 43;
-		//CreateCSV.createCSV(test);
-		
-		
+		test.targetType = 3;
+		test.deadlineDate = "11-07-2019";
+		test.targetValue = 5;
+		CreateCSV.createCSV(test);
 	}
+	*/
 	
 }

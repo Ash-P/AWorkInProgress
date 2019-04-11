@@ -19,7 +19,6 @@ public class TargetsMenu {
 		title.setLayoutX(240);
 		title.setLayoutY(15);
 
-		// 570 for save button
 		back.setLayoutX(20);
 		back.setLayoutY(278);
 
@@ -42,7 +41,7 @@ public class TargetsMenu {
 		//
 		setupHandles();
 
-		Group root = new Group(save, back, addTarget, viewTargets, title);
+		Group root = new Group(addTarget, viewTargets, back, save, title);
 		Scene mainScene = new Scene(root, 640, 320);
 		MAIN.mainStage.setScene(mainScene);
 
@@ -50,15 +49,20 @@ public class TargetsMenu {
 
 	static void setupHandles() {
 
-		save.setOnAction(e -> {
-			MAIN.saveData();
+		addTarget.setOnAction(e -> {	
+			AddATarget addTargetObj = new AddATarget();
 		});
+		
+		viewTargets.setOnAction(e -> {
+			ViewTargets viewTargetsObj = new ViewTargets();
+		});
+		
 		back.setOnAction(e -> {
 			MAIN.instantiate();
 		});
-
-		addTarget.setOnAction(e -> {	
-			
+		
+		save.setOnAction(e -> {
+			MAIN.saveData();
 		});
 	}
 }

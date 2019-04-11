@@ -17,7 +17,7 @@ public abstract class TestData implements storage{
         bookData.title = "Harry Potter: The Philosopher's Stone";
         bookData.author = "J. K. Rowling";
         bookData.publisher = "Bloomsbury Publishing";
-        bookData.publicationYear = "26 June 1997";
+        bookData.publicationYear = 1997;
         bookData.pages = 223;
         bookData.genre = "Fantasy";
         bookData.dateAdded = "27 March 2019";

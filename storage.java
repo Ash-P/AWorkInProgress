@@ -1,5 +1,3 @@
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 public interface storage {
@@ -36,7 +34,7 @@ public interface storage {
 		String dateStarted;
 		String dateCompleted;
 		String description;
-		String pagesRead;
+		int pagesRead;
 		String pagesReadOnADate;
 		
 		public int getStatus() {
@@ -72,7 +70,7 @@ public interface storage {
 		public String getDescription() {
 			return description;
 		}
-		public String getPagesRead() {
+		public int getPagesRead() {
 			return pagesRead;
 		}
 		

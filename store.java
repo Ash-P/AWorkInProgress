@@ -81,7 +81,35 @@ public class store implements storage {
 		return userDataReturn;
 	}
 
+	public static ArrayList<userData> staticRetrieveUserData() throws IOException {
+		ArrayList<userData> userDataReturn = new ArrayList<>();
+		File myFile = new File("userStore.txt");
+		FileReader fileIn = new FileReader(myFile);
+		BufferedReader input = new BufferedReader(fileIn);
 
+		String s = input.readLine();
+		// for(String s = userFileReader.readLine(); s != null; s =
+		// userFileReader.readLine()){
+		while (s != null) {
+			String[] properties = s.split(" ; ");
+			userData userdata = new userData();
+			userdata.userID = Integer.parseInt(properties[0]);
+			userdata.username = properties[1];
+			userdata.totalPagesRead = Integer.parseInt(properties[2]);
+			userdata.totalBooksRead = Integer.parseInt(properties[3]);
+			userdata.pageAchievsUnlocked = Integer.parseInt(properties[4]);
+			userdata.bookAchievsUnlocked = Integer.parseInt(properties[5]);
+			try {
+				userdata.booksCompletedOnADate = properties[6];
+			} catch (Exception e) {
+				userdata.booksCompletedOnADate = "";
+			}
+			;
+			userDataReturn.add(userdata);
+			s = input.readLine();
+		}
+		return userDataReturn;
+	}
 	
 	
 	
@@ -207,6 +235,7 @@ public class store implements storage {
 
 	@Override
 	public void storeUserData(ArrayList<userData> newUserData) {
+		
 		try {
 			FileWriter updateFile = new FileWriter(userStoreFile, false);
 			for (userData u : newUserData) {
@@ -219,11 +248,12 @@ public class store implements storage {
 		} catch (IOException e) {
 			System.out.println("Something went wrong");
 		}
+		
 	}
 
 	public static void storeSingleUser(userData u) {
 		try {
-			FileWriter fwUpdateFile = new FileWriter("userStore.txt", false);
+			FileWriter fwUpdateFile = new FileWriter("userStore.txt", true);
 			BufferedWriter updateFile = new BufferedWriter(fwUpdateFile);
 			
 			updateFile.newLine();

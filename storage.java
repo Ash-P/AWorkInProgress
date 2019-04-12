@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
 public interface storage {
-
 	
 	public ArrayList<userData> retrieveUserData() throws IOException;
 	public ArrayList<bookData> retrieveBookData() throws IOException;
@@ -9,7 +8,6 @@ public interface storage {
 	public void storeUserData( ArrayList<userData> newUserData );
 	public void storeBookData( ArrayList<bookData> newBookData );
 	public void storeTargetData( ArrayList<targetData> newTargetData );
-	
 	
 	public class userData{
 		int userID;
@@ -25,39 +23,26 @@ public interface storage {
 		int bookID;
 		int status;
 		String title;
-		String author;
-		String publisher;
-		String publicationYear;
 		int pages;
-		String genre;
 		String dateAdded;
 		String dateStarted;
 		String dateCompleted;
-		String description;
 		int pagesRead;
 		String pagesReadOnADate;
+		String author;
+		String publisher;
+		int publicationYear;
+		String genre;
+		String description;
 		
-		public String getStatus() {
-			if(status == 0) {return "Read Previously";}else if(status == 1) {return "Currently Reading";}
-			else{ return "Want to Read";}
+		public int getStatus() {
+			return status;
 		}
 		public String getTitle() {
 			return title;
 		}
-		public String getAuthor() {
-			return author;
-		}
-		public String getPublisher() {
-			return publisher;
-		}
-		public String getPublicationYear() {
-			return publicationYear;
-		}
 		public int getPages() {
 			return pages;
-		}
-		public String getGenre() {
-			return genre;
 		}
 		public String getDateAdded() {
 			return dateAdded;
@@ -68,13 +53,24 @@ public interface storage {
 		public String getDateCompleted() {
 			return dateCompleted;
 		}
-		public String getDescription() {
-			return description;
-		}
 		public int getPagesRead() {
 			return pagesRead;
 		}
-		
+		public String getAuthor() {
+			return author;
+		}
+		public String getPublisher() {
+			return publisher;
+		}
+		public int getPublicationYear() {
+			return publicationYear;
+		}
+		public String getGenre() {
+			return genre;
+		}
+		public String getDescription() {
+			return description;
+		}
 	}
 	
 	public class targetData{
@@ -105,6 +101,6 @@ public interface storage {
 		public int getValueRemaining() {
 			return valueRemaining;
 		}
-		
 	}
+	
 }

@@ -396,7 +396,7 @@ public class AddABook {
 					
 					if(isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description)
 							&& BookDataValidation.validateFieldsPrevious(pages, dateStarted, dateCompleted, pagesReadOnADate)) {
-						//addNewPreviousBook(title, pages, dateStarted, dateCompleted, pagesReadOnADate, author, publisher, publicationYear, genre, description);
+						addNewPreviousBook(title, pages, dateStarted, dateCompleted, pagesReadOnADate, author, publisher, publicationYear, genre, description);
 						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
 						clearFields();
 					}
@@ -433,7 +433,7 @@ public class AddABook {
 					
 					if(isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description)
 							&& BookDataValidation.validateFieldsCurrent(pages, pagesRead, pagesReadOnADate)) {
-						//addNewCurrentBook(title, pages, dateStarted, pagesRead, pagesReadOnADate, author, publisher, publicationYear, genre, description);
+						addNewCurrentBook(title, pages, dateStarted, pagesRead, pagesReadOnADate, author, publisher, publicationYear, genre, description);
 						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
 						clearFields();
 					}
@@ -444,7 +444,7 @@ public class AddABook {
 					//NO ADDITIONAL FIELDS APPLY TO BOOKS OF STATUS 2
 					
 					if(isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description)) {
-						//addNewFutureBook(title, pages, author, publisher, publicationYear, genre, description);
+						addNewFutureBook(title, pages, author, publisher, publicationYear, genre, description);
 						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
 						clearFields();
 					}

@@ -25,6 +25,8 @@ import java.util.Date;
 //TODO: Back buttons to outermost UI's
 //TODO: Create new user - need to retrieve list of users
 //TODO: Editing targets
+//TODO: Fix error with manually assigning pages to each day in AddABook menu
+
 
 public class MAIN extends Application {
 	

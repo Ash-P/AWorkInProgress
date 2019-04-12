@@ -31,6 +31,8 @@ public class DisplayChart {
 	private final ComboBox<String> booksPagesRead = new ComboBox<String>();
 	private final Button refresh = new Button("Generate graph");
 	public static Stage Mstage;
+	
+	public static Button back = new Button("Back");
 	String title = "Progress";
 	
 	DisplayChart(){
@@ -69,7 +71,11 @@ public class DisplayChart {
 		LineChart graph = new LineChart(xAxis, yAxis);
 		graph.setLayoutX(50);
 		graph.setLayoutY(140);
-		Group root = new Group(booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl,graph, refresh);
+		
+		back.setLayoutX(15);
+		back.setLayoutY(560);
+		
+		Group root = new Group(back, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl,graph, refresh);
 
 		Scene scene = new Scene(root, 640, 600);
 		setupHandles();
@@ -237,7 +243,11 @@ public class DisplayChart {
 	}
 private void setupHandles() {
 		
-	
+		back.setOnAction(e->{
+			
+			ViewTrackingDataMenu.instantiate();
+			
+		});
 	
 		refresh.setOnAction(e -> {
 			System.out.println(booksPagesRead.getValue());

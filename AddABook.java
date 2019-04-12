@@ -228,7 +228,7 @@ public class AddABook {
 		alldata.bookStore.add(newBook);
 		alldata.userStore.totalPagesRead += pages;
 		alldata.userStore.totalBooksRead++;
-
+	
 		AddATarget.updateTargets(newBook.pagesRead, newBook.bookID, true);
 	}
 
@@ -340,6 +340,8 @@ public class AddABook {
 
 			@Override
 			public void handle(ActionEvent arg0) {
+		
+		
 				Boolean isValid = true;
 				// ESSENTIAL FIELDS FOR ALL BOOKS
 				int status = -1;
@@ -352,6 +354,8 @@ public class AddABook {
 				String genre = null;
 				String description = null;
 
+				
+				
 				// GET VALUES OF THE FIELDS THAT APPLY TO ALL BOOKS
 				if (!bookTitleTxt.getText().isEmpty())
 					title = bookTitleTxt.getText();
@@ -422,8 +426,9 @@ public class AddABook {
 									genre, description)
 							&& BookDataValidation.validateFieldsPrevious(pages, dateStarted, dateCompleted,
 									pagesReadOnADate)) {
-						// addNewPreviousBook(title, pages, dateStarted, dateCompleted,
-						// pagesReadOnADate, author, publisher, publicationYear, genre, description);
+						addNewPreviousBook(title, pages, dateStarted, dateCompleted,
+						pagesReadOnADate, author, publisher, publicationYear, genre, description);
+						AchievementGUI.updateTargets();
 						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created",
 								"The book " + title + " has been successfully added to the system.");
 						clearFields();
@@ -468,8 +473,9 @@ public class AddABook {
 							&& BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear,
 									genre, description)
 							&& BookDataValidation.validateFieldsCurrent(pages, pagesRead, pagesReadOnADate)) {
-						// addNewCurrentBook(title, pages, dateStarted, pagesRead, pagesReadOnADate,
-						// author, publisher, publicationYear, genre, description);
+						addNewCurrentBook(title, pages, dateStarted, pagesRead, pagesReadOnADate,
+						author, publisher, publicationYear, genre, description);
+						AchievementGUI.updateTargets();
 						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created",
 								"The book " + title + " has been successfully added to the system.");
 						clearFields();
@@ -483,8 +489,8 @@ public class AddABook {
 
 					if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher,
 							publicationYear, genre, description)) {
-						// addNewFutureBook(title, pages, author, publisher, publicationYear, genre,
-						// description);
+						addNewFutureBook(title, pages, author, publisher, publicationYear, genre, description);
+						AchievementGUI.updateTargets();
 						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created",
 								"The book " + title + " has been successfully added to the system.");
 						clearFields();

@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.ArrayList;
 public interface storage {
+
 	
 	public ArrayList<userData> retrieveUserData() throws IOException;
 	public ArrayList<bookData> retrieveBookData() throws IOException;
@@ -8,6 +9,7 @@ public interface storage {
 	public void storeUserData( ArrayList<userData> newUserData );
 	public void storeBookData( ArrayList<bookData> newBookData );
 	public void storeTargetData( ArrayList<targetData> newTargetData );
+	
 	
 	public class userData{
 		int userID;
@@ -23,38 +25,24 @@ public interface storage {
 		int bookID;
 		int status;
 		String title;
-		int pages;
-		String dateAdded;
-		String dateStarted;
-		String dateCompleted;
-		int pagesRead;
-		String pagesReadOnADate;
 		String author;
 		String publisher;
 		int publicationYear;
+		int pages;
 		String genre;
+		String dateAdded;
+		String dateStarted;
+		String dateCompleted;
 		String description;
+		int pagesRead;
+		String pagesReadOnADate;
 		
-		public int getStatus() {
-			return status;
+		public String getStatus() {
+			if(status == 0) {return "Read Previously";}else if(status == 1) {return "Currently Reading";}
+			else{ return "Want to Read";}
 		}
 		public String getTitle() {
 			return title;
-		}
-		public int getPages() {
-			return pages;
-		}
-		public String getDateAdded() {
-			return dateAdded;
-		}
-		public String getDateStarted() {
-			return dateStarted;
-		}
-		public String getDateCompleted() {
-			return dateCompleted;
-		}
-		public int getPagesRead() {
-			return pagesRead;
 		}
 		public String getAuthor() {
 			return author;
@@ -65,12 +53,28 @@ public interface storage {
 		public int getPublicationYear() {
 			return publicationYear;
 		}
+		public int getPages() {
+			return pages;
+		}
 		public String getGenre() {
 			return genre;
+		}
+		public String getDateAdded() {
+			return dateAdded;
+		}
+		public String getDateStarted() {
+			return dateStarted;
+		}
+		public String getDateCompleted() {
+			return dateCompleted;
 		}
 		public String getDescription() {
 			return description;
 		}
+		public int getPagesRead() {
+			return pagesRead;
+		}
+		
 	}
 	
 	public class targetData{
@@ -81,6 +85,15 @@ public interface storage {
 		int bookID;
 		int targetValue;
 		int valueRemaining;
+		
+		
+		public void setTargetType(int targetType) {
+			this.targetType = targetType;
+		}
+		
+		public void setValueRemaining(int valueRemaining) {
+			this.valueRemaining = valueRemaining;
+		}
 		
 		public String getTargetType() {
 			if(targetType == 1) return "Pages of the book " + MAIN.getBookTitle(bookID);
@@ -101,6 +114,6 @@ public interface storage {
 		public int getValueRemaining() {
 			return valueRemaining;
 		}
+		
 	}
-	
 }

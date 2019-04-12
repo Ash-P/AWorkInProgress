@@ -156,7 +156,7 @@ public class LoginGUI{
 
      
         createUser(Username);
-           displayWindow("Name not found");//This can be expanded to allow user to create a file/account
+           displayWindow("New user created.");//This can be expanded to allow user to create a file/account
 
     }
 

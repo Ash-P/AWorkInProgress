@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;  
 
-//TODO: ACHIEVEMENTS
 //TODO: Back buttons to outermost UI's
-//TODO: Anything left to AddABook
 //TODO: Create new user - need to retrieve list of users
 
 
@@ -62,6 +60,7 @@ public class MAIN extends Application {
 				break;
 			}
 		}
+		
 		storageObj.storeTargetData(alldata.targetStore);
 	}
 	
@@ -204,7 +203,8 @@ public class MAIN extends Application {
 		});
 		
 		achievements.setOnAction(e->{
-			//Achievements x = new Achievements();
+			AchievementGUI x = new AchievementGUI();
+			
 		});
 		
 		save.setOnAction(e->{	
@@ -252,12 +252,12 @@ public class MAIN extends Application {
 			}
 		}*/
 		
-		/*try {
-			allusers = storageObj.retrieveUserData();
+		try {
+			allusers = store.staticRetrieveUserData();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 	
 		launch(args);
 		

@@ -209,8 +209,8 @@ public class AddATarget {
 	 * @param bookComplete : true if the book has just been completed (status is 0), false otherwise
 	 */
 	public static void updateTargets(int pageProgress, int bookID, Boolean bookComplete){
-		ArrayList<storage.targetData> targetList = alldata.targetStore;
-		for(storage.targetData t : targetList){
+
+		for(storage.targetData t : alldata.targetStore){
 			if(t.isComplete) continue;
 			if(t.targetType == 1 && t.bookID == bookID) {
 				t.valueRemaining -= pageProgress;
@@ -240,7 +240,7 @@ public class AddATarget {
 						else targetCompleted(t, false);
 					} catch (ParseException e) {
 					}
-				}
+				}	
 			}
 			else if(t.targetType == 3 && bookComplete) {
 				t.valueRemaining--;
@@ -258,7 +258,8 @@ public class AddATarget {
 			}
 		}
 	}
-
+	
+	
 	private static void targetCompleted(storage.targetData target, Boolean completedOnTime) {
 		Alert dialog = new Alert(AlertType.INFORMATION);
 		dialog.setTitle("Target Completed");

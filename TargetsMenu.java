@@ -24,6 +24,7 @@ public class TargetsMenu {
 
 		save.setLayoutX(570);
 		save.setLayoutY(278);
+		
 		//
 		addTarget.setStyle("-fx-font: 15px Tahoma;");
 		viewTargets.setStyle("-fx-font: 15px Tahoma;");

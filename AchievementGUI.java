@@ -16,7 +16,7 @@ public class AchievementGUI {
 	public static final int[] PAGE_ACHIEVEMENTS = { 1, 10, 50, 100, 250, 500, 1000, 5000, 10000 };
 	public static final int[] BOOK_ACHIEVEMENTS = { 1, 5, 10, 25, 50, 100, 150, 250, 500 };
 	private static int totalPagesRead = alldata.userStore.totalPagesRead;
-	private static int totalBooksRead = alldata.userStore.totalPagesRead;
+	private static int totalBooksRead = alldata.userStore.totalBooksRead;
 	private static int pageAchievsUnlocked = alldata.userStore.pageAchievsUnlocked;
 	private static int bookAchievsUnlocked = alldata.userStore.bookAchievsUnlocked;
 	
@@ -122,17 +122,19 @@ public class AchievementGUI {
     
     public static void updateTargets() {
     	int totalPagesRead = alldata.userStore.totalPagesRead;
-    	int totalBooksRead = alldata.userStore.totalPagesRead;
+    	int totalBooksRead = alldata.userStore.totalBooksRead;
     	int pageAchievsUnlocked = alldata.userStore.pageAchievsUnlocked;
     	int bookAchievsUnlocked = alldata.userStore.bookAchievsUnlocked;
     	
+    	
     	while(true) {
-	    	if(totalPagesRead >= PAGE_ACHIEVEMENTS[pageAchievsUnlocked + 1]) {
+	    	if(pageAchievsUnlocked < 8 && totalPagesRead >= PAGE_ACHIEVEMENTS[pageAchievsUnlocked + 1]) {
 	    		pageAchievsUnlocked++;
 	    	} else break;
     	}
+    	
     	while(true) {
-	    	if(totalBooksRead >= BOOK_ACHIEVEMENTS[bookAchievsUnlocked + 1]) {
+	    	if(bookAchievsUnlocked < 8 && totalBooksRead >= BOOK_ACHIEVEMENTS[bookAchievsUnlocked + 1]) {
 	    		bookAchievsUnlocked++;
 	    	} else break;
     	}

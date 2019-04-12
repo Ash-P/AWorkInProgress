@@ -24,7 +24,7 @@ import java.util.Date;
 
 //TODO: Back buttons to outermost UI's
 //TODO: Create new user - need to retrieve list of users
-
+//TODO: Editing targets
 
 public class MAIN extends Application {
 	

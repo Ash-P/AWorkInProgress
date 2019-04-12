@@ -23,10 +23,10 @@ import java.util.Calendar;
 import java.util.Date;  
 
 //TODO: ACHIEVEMENTS
-//TODO: Average pages in add new book 
-//TODO: Save functionality
-//TODO: Back
-//TODO: Reading progress update UI+functionality
+//TODO: Back buttons to outermost UI's
+//TODO: Anything left to AddABook
+//TODO: Create new user - need to retrieve list of users
+
 
 public class MAIN extends Application {
 	
@@ -252,7 +252,12 @@ public class MAIN extends Application {
 			}
 		}*/
 		
-		
+		/*try {
+			allusers = storageObj.retrieveUserData();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 	
 		launch(args);
 		

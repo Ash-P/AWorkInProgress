@@ -156,15 +156,26 @@ public class LoginGUI{
         }
 
         if(!found)
-        	
+        	createUser(Username);
             displayWindow("Name not found");//This can be expanded to allow user to create a file/account
 
     }
 
-    public void createUser() {
+    public static void createUser(String Username) {
     	storage.userData newUser = new storage.userData();
-    	
+    	newUser.userID = MAIN.allusers.get(MAIN.allusers.size()-1).userID + 1;
+    	newUser.username = Username;
+    	newUser.bookAchievsUnlocked = 0;
+    	newUser.pageAchievsUnlocked = 0;
+    	newUser.totalBooksRead = 0;
+    	newUser.totalPagesRead = 0;
+    	newUser.booksCompletedOnADate = " ";
+    
+    	store.storeSingleUser(newUser);
+    	MAIN.begin(Username);
     	//newUser.
+    	
+    	
     }
     
     

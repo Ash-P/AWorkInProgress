@@ -44,44 +44,47 @@ public class AchievementGUI extends Application {
 
         primaryStage.setTitle("Achievements");
 
+        p1 = new Circles(layout,40,121);
+        p10 = new Circles(layout,125,121);
+        p50 = new Circles(layout,216,121);
+        b1 = new Circles(layout,363,121);
+        b5 = new Circles(layout,454,121);
+        b10 = new Circles(layout,538,121);
+        p100 = new Circles(layout,40,200);
+        p250 = new Circles(layout,125,200);
+        p500 = new Circles(layout,216,200);
+        b25 = new Circles(layout,363,200);
+        b50 = new Circles(layout,454,200);
+        b100 = new Circles(layout,538,200);
+        p1000 = new Circles(layout,40,276);
+        p5000 = new Circles(layout,125,276);
+        p10000 = new Circles(layout,216,276);
+        b150 = new Circles(layout,363,276);
+        b250 = new Circles(layout,454,276);
+        b500 = new Circles(layout,538,276);
+
+
         checkTotalBooks();
         checkTotalPages();
 
-        p1 = new Circles(layout,40,121);
+
         p1.createCircles();
-        p10 = new Circles(layout,125,121);
         p10.createCircles();
-        p50 = new Circles(layout,216,121);
         p50.createCircles();
-        b1 = new Circles(layout,363,121);
         b1.createCircles();
-        b5 = new Circles(layout,454,121);
         b5.createCircles();
-        b10 = new Circles(layout,538,121);
         b10.createCircles();
-        p100 = new Circles(layout,40,200);
         p100.createCircles();
-        p250 = new Circles(layout,125,200);
         p250.createCircles();
-        p500 = new Circles(layout,216,200);
         p500.createCircles();
-        b25 = new Circles(layout,363,200);
         b25.createCircles();
-        b50 = new Circles(layout,454,200);
         b50.createCircles();
-        b100 = new Circles(layout,538,200);
         b100.createCircles();
-        p1000 = new Circles(layout,40,276);
         p1000.createCircles();
-        p5000 = new Circles(layout,125,276);
         p5000.createCircles();
-        p10000 = new Circles(layout,216,276);
         p10000.createCircles();
-        b150 = new Circles(layout,363,276);
         b150.createCircles();
-        b250 = new Circles(layout,454,276);
         b250.createCircles();
-        b500 = new Circles(layout,538,276);
         b500.createCircles();
 
         loadLabels("1",36,112,13,layout);
@@ -163,7 +166,7 @@ public class AchievementGUI extends Application {
         int booksRead = alldata.userStore.totalBooksRead;
 
         if(booksRead >= 1){
-            set;
+            b1.setDone(true);
         }
         else if(booksRead >= 5){
             b5.setDone(true);
@@ -202,6 +205,7 @@ public class AchievementGUI extends Application {
             this.layout = layout;
             this.layX = layX;
             this.layY = layY;
+            isDone = false;
         }
 
         public void createCircles(){

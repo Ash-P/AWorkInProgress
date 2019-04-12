@@ -60,7 +60,7 @@ public class ViewBooks {
 		TableColumn<storage.bookData, String> bookPublisher = new TableColumn<>("Publisher");
 		bookPublisher.setCellValueFactory(new PropertyValueFactory<>("publisher"));
 
-		TableColumn<storage.bookData, String> bookPublishYear = new TableColumn<>("Published Year");
+		TableColumn<storage.bookData, Integer> bookPublishYear = new TableColumn<>("Published Year");
 		bookPublishYear.setCellValueFactory(new PropertyValueFactory<>("publicationYear"));
 
 		TableColumn<storage.bookData, String> bookGenre = new TableColumn<>("Book Genre");

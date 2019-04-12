@@ -33,6 +33,9 @@ public class BookDataValidation {
 		if(publicationYear != -1 && !validBookDataInteger(String.valueOf(publicationYear))) return false;
 		
 		if(title.equals(null)) return false;
+		for(storage.bookData b : alldata.bookStore) {
+			if(b.title == title) return false;
+		}
 		if(pages < 1) return false;
 		try {
 			if(publicationYear != -1 && Year.now().compareTo(Year.parse(String.valueOf(publicationYear))) < 0) return false; //publicationYear cannot be a future year

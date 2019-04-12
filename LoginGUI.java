@@ -140,24 +140,23 @@ public class LoginGUI{
     }
 
     public static void checkUsername(List<String> fileLines, String Username){
-        boolean found = false;
+      
 
         for (String line : fileLines) {
             boolean isPresent = line.contains(Username);
             if(isPresent) {
-                displayWindow("Name Found");//This can be replaced with open main menu
-                found = true;
+                displayWindow("Welcome, "+ Username);//This can be replaced with open main menu
+         
                 MAIN.begin(Username);
-                break;
+               	return;
             }
 
-            if(line.startsWith("'1BookStore.txt'"))
-                break;
+       
         }
 
-        if(!found)
-        	createUser(Username);
-            displayWindow("Name not found");//This can be expanded to allow user to create a file/account
+     
+        createUser(Username);
+           displayWindow("Name not found");//This can be expanded to allow user to create a file/account
 
     }
 
@@ -165,12 +164,12 @@ public class LoginGUI{
     	storage.userData newUser = new storage.userData();
     	newUser.userID = MAIN.allusers.get(MAIN.allusers.size()-1).userID + 1;
     	newUser.username = Username;
-    	newUser.bookAchievsUnlocked = 0;
-    	newUser.pageAchievsUnlocked = 0;
+    	newUser.bookAchievsUnlocked = -1;
+    	newUser.pageAchievsUnlocked = -1;
     	newUser.totalBooksRead = 0;
     	newUser.totalPagesRead = 0;
     	newUser.booksCompletedOnADate = " ";
-    
+    	
     	store.storeSingleUser(newUser);
     	MAIN.begin(Username);
     	//newUser.

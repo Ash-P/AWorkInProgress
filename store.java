@@ -124,7 +124,7 @@ public class store implements storage {
 			bookdata.dateCompleted = properties[6];
 			bookdata.author = properties[7];
 			bookdata.publisher = properties[8];
-			bookdata.publicationYear = properties[9];
+			bookdata.publicationYear = Integer.parseInt(properties[9]);
 			bookdata.genre = properties[10];
 			bookdata.description = properties[11];
 			bookdata.pagesRead = Integer.parseInt(properties[12]);

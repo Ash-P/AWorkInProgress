@@ -1,5 +1,4 @@
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -60,7 +59,7 @@ public class AddABook {
 	private Scene primaryScene;
 
 	StringBuilder pagesOnDateToStore = new StringBuilder();
-	// manual specified pagesReadOnADate entries are stored here when the addBtn is
+	// manually specified pagesReadOnADate entries are stored here when the addBtn is
 	// pressed
 
 	public AddABook() {
@@ -113,6 +112,7 @@ public class AddABook {
 				setDisable(empty || date.compareTo(LocalDate.now()) > 0);
 			}
 		});
+		dateStartedPicker.setDisable(true);
 		GridPane.setConstraints(dateStartedPicker, 0, 4);
 
 		dateCompletedPicker.setPromptText("Date Completed");
@@ -124,6 +124,7 @@ public class AddABook {
 				setDisable(empty || date.compareTo(LocalDate.now()) > 0);
 			}
 		});
+		dateCompletedPicker.setDisable(true);
 		GridPane.setConstraints(dateCompletedPicker, 0, 5);
 
 		pagesReadTxt.setPromptText("Pages Read");
@@ -138,14 +139,15 @@ public class AddABook {
 		GridPane.setConstraints(previouslyReadBox, 0, 7);
 
 		dateReadPicker.setPromptText("Date Read");
-		dateReadPicker.setEditable(false); // forces a date to be selected from the calendar (prevents future dates
-											// being entered manually)
+		dateReadPicker.setEditable(false); // forces a date to be selected from the calendar (prevents future dates being entered manually)
+		/*
 		dateReadPicker.setDayCellFactory(picker -> new DateCell() { // disable future dates
 			public void updateItem(LocalDate date, boolean empty) {
 				super.updateItem(date, empty);
 				setDisable(empty || date.compareTo(LocalDate.now()) > 0);
 			}
 		});
+		*/
 		dateReadPicker.setDisable(true);
 		GridPane.setConstraints(dateReadPicker, 0, 8);
 
@@ -179,15 +181,15 @@ public class AddABook {
 		bookDescriptionTxt.setPrefColumnCount(16);
 
 		//submitBtn.setText("Submit");
-		submitBtn.setLayoutX(400);
+		submitBtn.setLayoutX(380);
 		submitBtn.setLayoutY(330);
 
 		//clearBtn.setText("Clear");
-		clearBtn.setLayoutX(460);
+		clearBtn.setLayoutX(450);
 		clearBtn.setLayoutY(330);
 
 		backBtn.setLayoutX(15);
-		backBtn.setLayoutY(390);
+		backBtn.setLayoutY(398);
 		
 		
 		changeVisibility(bookDescriptionTxt, bookAuthorTxt, bookPublisherTxt, bookPublicationYearTxt, bookGenreTxt);
@@ -197,9 +199,7 @@ public class AddABook {
 				bookPublisherTxt, bookPublicationYearTxt, bookGenreTxt, bookDescriptionTxt);
 	}
 
-	private void addNewPreviousBook(String title, int pages, String dateStarted, String dateCompleted,
-			String pagesReadOnADate, String author, String publisher, int publicationYear, String genre,
-			String description) {
+	private void addNewPreviousBook(String title, int pages, String dateStarted, String dateCompleted, String pagesReadOnADate, String author, String publisher, int publicationYear, String genre, String description) {
 		storage.bookData newBook = new storage.bookData();
 
 		newBook.bookID = getHighestBookID() + 1;
@@ -226,8 +226,7 @@ public class AddABook {
 		AddATarget.updateTargets(newBook.pagesRead, newBook.bookID, true);
 	}
 
-	private void addNewCurrentBook(String title, int pages, String dateStarted, int pagesRead, String pagesReadOnADate,
-			String author, String publisher, int publicationYear, String genre, String description) {
+	private void addNewCurrentBook(String title, int pages, String dateStarted, int pagesRead, String pagesReadOnADate, String author, String publisher, int publicationYear, String genre, String description) {
 		storage.bookData newBook = new storage.bookData();
 
 		newBook.bookID = getHighestBookID() + 1;
@@ -253,8 +252,7 @@ public class AddABook {
 		AddATarget.updateTargets(newBook.pagesRead, newBook.bookID, false);
 	}
 
-	private void addNewFutureBook(String title, int pages, String author, String publisher, int publicationYear,
-			String genre, String description) {
+	private void addNewFutureBook(String title, int pages, String author, String publisher, int publicationYear, String genre, String description) {
 		storage.bookData newBook = new storage.bookData();
 
 		newBook.bookID = getHighestBookID() + 1;
@@ -279,27 +277,44 @@ public class AddABook {
 
 	// Setup all action handlers
 	private void setupHandlers() {
+		
 		statusBox.setOnAction(e -> {
-			if (statusBox.getValue() == "Read Previously") {
+			if(statusBox.getValue() == "Read Previously") {
 				dateStartedPicker.setDisable(false);
 				dateCompletedPicker.setDisable(false);
 				pagesReadTxt.setDisable(true);
-				previouslyReadBox.setDisable(false);
-				if (!(previouslyReadBox.getValue() == "Distribute evenly")) {
+				
+				if(previouslyReadBox.getValue() == "Specify manually") {
 					pagesOnDateTxt.setDisable(false);
 					dateReadPicker.setDisable(false);
 					addBtn.setDisable(false);
 				}
+				else {
+					pagesOnDateTxt.setDisable(true);
+					dateReadPicker.setDisable(true);
+					addBtn.setDisable(true);
+				}
+				
 				pagesReadTxt.clear();
-			} else if (statusBox.getValue() == "Currently Reading") {
+			} else if(statusBox.getValue() == "Currently Reading") {
 				dateStartedPicker.setDisable(false);
 				dateCompletedPicker.setDisable(true);
 				pagesReadTxt.setDisable(false);
-				previouslyReadBox.setDisable(false);
+				
+				if(previouslyReadBox.getValue() == "Specify manually") {
+					pagesOnDateTxt.setDisable(false);
+					dateReadPicker.setDisable(false);
+					addBtn.setDisable(false);
+				}
+				else {
+					pagesOnDateTxt.setDisable(true);
+					dateReadPicker.setDisable(true);
+					addBtn.setDisable(true);
+				}
 
 				dateCompletedPicker.valueProperty().set(null);
 
-			} else if (statusBox.getValue() == "Want to Read") {
+			} else if(statusBox.getValue() == "Want to Read") {
 				dateStartedPicker.setDisable(true);
 				dateCompletedPicker.setDisable(true);
 				pagesReadTxt.setDisable(true);
@@ -323,13 +338,53 @@ public class AddABook {
 				pagesOnDateTxt.setDisable(false);
 				dateReadPicker.setDisable(false);
 				addBtn.setDisable(false);
+				if(statusBox.getValue() != null) {
+					if( statusBox.getValue() == "Read Previously" && dateStartedPicker.getValue() != null && dateCompletedPicker.getValue() != null) {
+						dateReadPicker.setDayCellFactory(picker -> new DateCell() { // force dates between dateStarted and dateCompleted
+							public void updateItem(LocalDate date, boolean empty) {
+								super.updateItem(date, empty);
+								setDisable(empty || date.compareTo(dateStartedPicker.getValue()) < 0 || date.compareTo(dateCompletedPicker.getValue()) > 0);
+							}
+						});
+					}
+					else if( statusBox.getValue() == "Currently Reading" && dateStartedPicker.getValue() != null ) {
+						dateReadPicker.setDayCellFactory(picker -> new DateCell() { // force dates between dateStarted and the current date
+							public void updateItem(LocalDate date, boolean empty) {
+								super.updateItem(date, empty);
+								setDisable(empty || date.compareTo(dateStartedPicker.getValue()) < 0 || date.compareTo(LocalDate.now()) > 0);
+							}
+						});
+					}
+				}
 			} else {
 				dateReadPicker.setDisable(true);
 				pagesOnDateTxt.setDisable(true);
 				addBtn.setDisable(true);
 			}
 		});
-
+		
+		dateStartedPicker.setOnAction(e -> {
+				if(dateCompletedPicker.getValue() == null) {
+					dateCompletedPicker.setDayCellFactory(picker -> new DateCell() { // disable dates before dateStarted
+						public void updateItem(LocalDate date, boolean empty) {
+							super.updateItem(date, empty);
+							setDisable(empty || date.compareTo(dateStartedPicker.getValue()) < 0 || date.compareTo(LocalDate.now()) > 0);
+						}
+					});
+				} else previouslyReadBox.setDisable(false);
+		});
+		
+		dateCompletedPicker.setOnAction(e -> {
+			if(dateStartedPicker.getValue() == null) {
+				dateStartedPicker.setDayCellFactory(picker -> new DateCell() { // disable dates after dateCompleted
+					public void updateItem(LocalDate date, boolean empty) {
+						super.updateItem(date, empty);
+						setDisable(empty || date.compareTo(dateCompletedPicker.getValue()) > 0);
+					}
+				});
+			} else previouslyReadBox.setDisable(false);
+		});
+		
 		submitBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -471,6 +526,10 @@ public class AddABook {
 			public void handle(ActionEvent arg0) {
 				clearFields(false);
 			}
+		});
+		
+		backBtn.setOnAction(e -> {
+			ManageBooksMenu.instantiate();
 		});
 
 		addBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -698,10 +757,6 @@ public class AddABook {
 				}
 			}
 		});
-		
-		backBtn.setOnAction(e -> {
-			ManageBooksMenu.instantiate();
-		});
 	}
 
 	private void clearFields(Boolean readProgOnly) {
@@ -726,16 +781,36 @@ public class AddABook {
 	
 			pagesOnDateToStore = new StringBuilder();
 	
-			dateStartedPicker.setDisable(false);
-			dateCompletedPicker.setDisable(false);
-			pagesReadTxt.setDisable(false);
+			dateStartedPicker.setDisable(true);
+			dateCompletedPicker.setDisable(true);
+			pagesReadTxt.setDisable(true);
 			previouslyReadBox.setDisable(true);
 			dateReadPicker.setDisable(true);
 			pagesOnDateTxt.setDisable(true);
 			addBtn.setDisable(true);
+			
+			dateStartedPicker.setDayCellFactory(picker -> new DateCell() { // disable future dates
+				public void updateItem(LocalDate date, boolean empty) {
+					super.updateItem(date, empty);
+					setDisable(empty || date.compareTo(LocalDate.now()) > 0);
+				}
+			});
+			
+			dateCompletedPicker.setDayCellFactory(picker -> new DateCell() { // disable future dates
+				public void updateItem(LocalDate date, boolean empty) {
+					super.updateItem(date, empty);
+					setDisable(empty || date.compareTo(LocalDate.now()) > 0);
+				}
+			});
 		}
 	}
 
+	/**
+	 * @param type : AlertType
+	 * @param title : String
+	 * @param header : String
+	 * @param content : String
+	 */
 	private static void createAlert(AlertType type, String title, String header, String content) {
 		Alert dialog = new Alert(type);
 		dialog.setTitle(title);
@@ -805,5 +880,4 @@ public class AddABook {
 				node.setVisible(true);
 		}
 	}
-
 }

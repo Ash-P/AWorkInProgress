@@ -155,13 +155,18 @@ public class store implements storage {
 			bookdata.genre = properties[10];
 			bookdata.description = properties[11];
 			
+			try {
+				if(!properties[9].trim().equals(""))
+					bookdata.publicationYear = Integer.parseInt(properties[9]);
+				else bookdata.publicationYear = -1;
+				if(!properties[12].trim().equals(""))
+					bookdata.pagesRead = Integer.parseInt(properties[12]);
+				else bookdata.pagesRead = 0;
+			} catch(NumberFormatException e) {
+				bookdata.publicationYear = -1;
+				bookdata.pagesRead = 0;
+			}
 			
-			if(!properties[9].trim().equals(""))
-				bookdata.publicationYear = Integer.parseInt(properties[9]);
-			else bookdata.publicationYear = -1;
-			if(!properties[12].trim().equals(""))
-				bookdata.pagesRead = Integer.parseInt(properties[12]);
-			else bookdata.pagesRead = 0;
 			try {
 				bookdata.pagesReadOnADate = properties[13];
 			} catch (Exception e) {

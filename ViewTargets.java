@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,14 +20,15 @@ public class ViewTargets {
 	private final TableView<storage.targetData> table = new TableView<storage.targetData>();
 	private Scene scene;
 	private Group group;
-	
+	public static Button back = new Button("Back");
+	TableColumn<storage.targetData, Integer> targetValueCol = new TableColumn<>();
 	public ViewTargets() {
 		createUI();
+		setupEditableColumns();
 		
-		scene = new Scene(group, 600, 450);
-		MAIN.mainStage.setScene(scene);
-		MAIN.mainStage.setTitle("View Targets");
 	}
+	
+
 	
 	private void createUI() {
 		table.setEditable(true);
@@ -69,16 +71,12 @@ public class ViewTargets {
 		});
 		
 		
-		TableColumn<storage.targetData, Integer> targetValueCol = new TableColumn<storage.targetData, Integer>("Target Value");
+		targetValueCol = new TableColumn<storage.targetData, Integer>("Target Value");
 		targetValueCol.setCellValueFactory(new PropertyValueFactory<>("targetValue"));
 		targetValueCol.setMinWidth(100);
 		
 		
-		targetValueCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-		targetValueCol.setOnEditCommit((TableColumn.CellEditEvent<storage.targetData, Integer> e)->{
-			int index = ((TableColumn.CellEditEvent<storage.targetData, Integer>) e).getTablePosition().getRow();
-			((storage.targetData) e.getTableView().getItems().get(index)).setTargetValue(e.getNewValue());
-		});
+		
 		
 		
 		TableColumn<storage.targetData, Integer> valueRemainingCol = new TableColumn<storage.targetData, Integer>("Value Remaining");
@@ -105,10 +103,26 @@ public class ViewTargets {
 		
 		group = new Group(grid);
 		
-		
+		scene = new Scene(group, 600, 450);
+		MAIN.mainStage.setScene(scene);
+		MAIN.mainStage.setTitle("View Targets");
 		
 	             
 
+	}
+	
+	
+	public void setupEditableColumns() {
+		targetValueCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		targetValueCol.setOnEditCommit((TableColumn.CellEditEvent<storage.targetData, Integer> e)->{
+			int index = ((TableColumn.CellEditEvent<storage.targetData, Integer>) e).getTablePosition().getRow();
+			((storage.targetData) e.getTableView().getItems().get(index)).setTargetValue(e.getNewValue());
+			table.getItems().clear();
+			table.getColumns().clear();
+			createUI();
+			
+			
+		});
 	}
 	
 	

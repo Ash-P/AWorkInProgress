@@ -20,7 +20,7 @@ import javafx.scene.control.Alert.AlertType;
 public class AddReadingProgress {
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	private final ComboBox<String> bookTitleBox = new ComboBox<>();
 	private final DatePicker datePicker = new DatePicker();
 	private final TextField pagesTxt = new TextField();
@@ -29,11 +29,14 @@ public class AddReadingProgress {
 	private Scene scene;
 	private Group group;
 	private Alert dialog = new Alert(AlertType.INFORMATION);
+	public static Button back = new Button("Back");
+	
 	
 	public AddReadingProgress() {
 		createUI();
 		setupHandles();
 		scene = new Scene(group, 600, 350);
+		//Y = WINDOWY-42
 		MAIN.mainStage.setScene(scene);
 		MAIN.mainStage.setTitle("Add Reading Progress");
 	}
@@ -58,9 +61,11 @@ public class AddReadingProgress {
 	
 	public void createUI() {
 		bookTitleBox.setPromptText("Book Title");
-		//for(storage.bookData b : alldata.bookStore) { //add books of status 1 and 2 only
-		//	if(b.status == 1 || b.status == 2) bookTitleBox.getItems().add(b.title);
-		//}
+		
+		for(storage.bookData b : alldata.bookStore) { //add books of status 1 and 2 only
+			if(b.status == 1 || b.status == 2) bookTitleBox.getItems().add(b.title);
+		}
+		
 		bookTitleBox.setEditable(true);
 		GridPane.setConstraints(bookTitleBox, 0, 1);
 		
@@ -85,13 +90,16 @@ public class AddReadingProgress {
 		clearBtn.setLayoutX(295);
 		clearBtn.setLayoutY(115);
 	
+		back.setLayoutX(15);
+		back.setLayoutY(140);
+		
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
 		grid.setVgap(5);
 		grid.setHgap(5);
 		grid.getChildren().addAll(bookTitleBox,datePicker,pagesTxt);
 		
-		group = new Group(grid,addBtn,clearBtn);
+		group = new Group(back, grid,addBtn,clearBtn);
 	}
 	
 	private void setupHandles() {
@@ -107,29 +115,27 @@ public class AddReadingProgress {
 					int status = book.status;
 					int pagesRemaining = book.pages - book.pagesRead;
 					if(validateFields(status, pagesRemaining, book.dateStarted, date, pages)) {
-						//TODO
+					
 						alldata.userStore.totalPagesRead += pages;
-						/*
-						 * Update so that: 
-						 * book.pagesRead = pagesRead + pages;
-						 * book.pagesReadOnADate += "[current date],pages"
-						 */
-						if(book.pagesRead == book.pages) { //book completed (status 1->0)
-							/*
-							 * Update book:
-							 * status = 0;
-							 * dateCompleted = current date
-							 */
+						
+						  book.pagesRead = book.pagesRead + pages;
+						  
+						  book.pagesReadOnADate +=  " " + date + "," + pages;
+						
+						
+						if(book.pagesRead == book.pages) { 
+						
+							book.status = 0;
+							book.dateCompleted = date;
+							
 							alldata.userStore.totalBooksRead++;
 						}
-						else if(book.pagesRead == 0) { //book begun (status 2->1)
-							/*
-							 * Update so that:
-							 * status = 1;
-							 * dateStarted = current date
-							 */
+						else if(book.pagesRead == 0) {
+							
+							book.status = 1;
+							book.dateStarted = date;
 						}
-						AddATarget.updateTargets(pages, book.bookID, status==0); //updates and checks for completion of targets
+						AddATarget.updateTargets(pages, book.bookID, status == 0); //updates and checks for completion of targets
 						//TODO update and check for completion of achievements
 						
 						//success dialog
@@ -155,8 +161,11 @@ public class AddReadingProgress {
 				datePicker.valueProperty().set(null);
 				pagesTxt.clear();
 			}
-		});		
+		});
 		
+		back.setOnAction(e->{
+			ManageBooksMenu.instantiate();
+		});
 	}
 	
 	//TODO red text when pages is not a positive int
@@ -166,7 +175,7 @@ public class AddReadingProgress {
 		if( !(bookStatus == 1 || bookStatus == 2) ) return false;
 		if(pages > pagesRemaining) return false;
 		if(dateStarted == null) return false; //TODO check what is dateStarted if type is not 1?? (is it null?)
-		if(bookStatus == 1 && ( LocalDate.parse(date, DATE_FORMATTER).compareTo(LocalDate.parse(dateStarted, DATE_FORMATTER)) < 0 )) return false; //rejects dates before dateStarted
+		//if(bookStatus == 1 && ( LocalDate.parse(date, DATE_FORMATTER).compareTo(LocalDate.parse(dateStarted, DATE_FORMATTER)) < 0 )) return false; //rejects dates before dateStarted
 		return true;
 	}
 }

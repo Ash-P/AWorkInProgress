@@ -48,6 +48,7 @@ public class BookDataValidation {
 	
 	//Validates fields that apply for new 'previously read' books
 	protected static Boolean validateFieldsPrevious(int pages, String dateStarted, String dateCompleted, String pagesReadOnADate) {
+		/*
 		try {
 			if(SIMPLE_DATE_FORMAT.parse(dateStarted).compareTo(SIMPLE_DATE_FORMAT.parse(dateCompleted)) > 0) {
 				System.out.println("Date completed cannot be before date started.");
@@ -55,6 +56,7 @@ public class BookDataValidation {
 			}
 		} catch (ParseException e) {
 		}
+		*/
 		if(getTotalPagesReadOnDates(pagesReadOnADate) != pages) {
 			System.out.println("Manually entered pages read does not match the number of pages of the book.");
 			return false;
@@ -80,12 +82,13 @@ public class BookDataValidation {
 	//Validates fields for manually adding reading progress to new 'previously read' books
 	protected static Boolean validateProgressFieldsPast(int pages, String dateStarted, String dateCompleted, String dateRead, int pagesOnDate, String pagesReadOnADate) {
 		if(pages < 1 || pagesOnDate < 1) return false;
+		/*
 		try {
 			if(SIMPLE_DATE_FORMAT.parse(dateStarted).compareTo(SIMPLE_DATE_FORMAT.parse(dateRead)) > 0) return false; //prevent dateStarted being after dateRead
 			if(SIMPLE_DATE_FORMAT.parse(dateRead).compareTo(SIMPLE_DATE_FORMAT.parse(dateCompleted)) > 0) return false; //prevent dateRead being after dateCompleted
-			
 		} catch (ParseException e) {
 		}
+		*/
 		if(pagesOnDate + getTotalPagesReadOnDates(pagesReadOnADate) > pages) return false;
 		return true;
 	}
@@ -93,10 +96,12 @@ public class BookDataValidation {
 	//Validates fields for manually adding reading progress to new 'currently reading' books
 	protected static Boolean validateProgressFieldsCurrent(int pages, String dateStarted, int pagesRead, String dateRead, int pagesOnDate, String pagesReadOnADate) {
 		if(pages < 1 || pagesRead < 1 || pagesOnDate < 1) return false;
+		/*
 		try {
 			if(DATE_FORMAT.parse(dateStarted).compareTo(DATE_FORMAT.parse(dateRead)) > 0) return false; //prevent dateStarted being after dateRead
 		} catch (ParseException e) {
 		}
+		*/
 		if(pagesOnDate + getTotalPagesReadOnDates(pagesReadOnADate) > pagesRead) return false;
 		return true;
 	}

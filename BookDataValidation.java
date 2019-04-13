@@ -83,14 +83,9 @@ public class BookDataValidation {
 		try {
 			if(SIMPLE_DATE_FORMAT.parse(dateStarted).compareTo(SIMPLE_DATE_FORMAT.parse(dateRead)) > 0) return false; //prevent dateStarted being after dateRead
 			if(SIMPLE_DATE_FORMAT.parse(dateRead).compareTo(SIMPLE_DATE_FORMAT.parse(dateCompleted)) > 0) return false; //prevent dateRead being after dateCompleted
-			System.out.println("1");
 		} catch (ParseException e) {
-			System.out.println("2");
 		}
-		System.out.println("3");
-		System.out.println("'" + pagesReadOnADate + "'");
 		if(pagesOnDate + getTotalPagesReadOnDates(pagesReadOnADate) > pages) return false;
-		System.out.println("4");
 		return true;
 	}
 	
@@ -100,7 +95,6 @@ public class BookDataValidation {
 		try {
 			if(DATE_FORMAT.parse(dateStarted).compareTo(DATE_FORMAT.parse(dateRead)) > 0) return false; //prevent dateStarted being after dateRead
 		} catch (ParseException e) {
-			return false;
 		}
 		if(pagesOnDate + getTotalPagesReadOnDates(pagesReadOnADate) > pagesRead) return false;
 		return true;

@@ -1,4 +1,8 @@
+import java.nio.file.attribute.PosixFilePermission;
+
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -9,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.layout.VBox;
 
 
 public class AchievementGUI {
@@ -19,6 +24,8 @@ public class AchievementGUI {
 	private static int totalBooksRead = alldata.userStore.totalBooksRead;
 	private static int pageAchievsUnlocked = alldata.userStore.pageAchievsUnlocked;
 	private static int bookAchievsUnlocked = alldata.userStore.bookAchievsUnlocked;
+	private final Label title = new Label("Achievements");
+	private final Button backBtn = new Button("Back");
 	
 	private static Circle p1, p10, p50, p100, p250, p500, p1000, p5000, p10000;
     private static Circle b1, b5, b10, b25, b50, b100, b150, b250, b500;
@@ -33,7 +40,7 @@ public class AchievementGUI {
     public AchievementGUI() {
     	createUI();
     	
-        Scene scene = new Scene(group,650,450);
+        Scene scene = new Scene(group,650,480);
         MAIN.mainStage.setScene(scene);
         MAIN.mainStage.setTitle("Achievements");
     }
@@ -80,11 +87,51 @@ public class AchievementGUI {
         loadLabels("250", 444,267,13);
         loadLabels("500",528,267,13);     
         loadLabels("Your pages read: " + totalPagesRead, 25, 329, 15);
-        loadLabels("Pages until next achievement: " + (PAGE_ACHIEVEMENTS[pageAchievsUnlocked+1] - totalPagesRead), 25, 360, 15);
+        loadLabels("Pages until next achievement: " + getPagesUntilNext(), 25, 360, 15);
         loadLabels("Your books read: " + totalBooksRead, 337, 329, 15);
-        loadLabels("Books until next achievement: " + (BOOK_ACHIEVEMENTS[bookAchievsUnlocked+1] - totalBooksRead), 337, 360, 15);
+        loadLabels("Books until next achievement: " + getBooksUntilNext(), 337, 360, 15);
         
-        group = new Group(layout);
+        title.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));       
+        title.setLayoutX(250);
+        title.setLayoutY(15);
+        
+        backBtn.setLayoutX(15);
+        backBtn.setLayoutY(438);
+
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(30, 0, 0, 10));
+        vbox.getChildren().addAll(layout);
+        
+        backBtn.setOnAction(e -> {
+        	ManageBooksMenu.instantiate();
+        });
+        
+        group = new Group(vbox, title, backBtn);
+    }
+    
+    private static int getPagesUntilNext() {
+    	int currentIndex = -1;
+    	for(int i = PAGE_ACHIEVEMENTS.length-1; i>=0; i--) {
+    		if(totalPagesRead >= PAGE_ACHIEVEMENTS[i]) {
+    			currentIndex = i;
+    			break;
+    		}
+    	}
+    	if(currentIndex == PAGE_ACHIEVEMENTS.length-1) return 0;
+    	return PAGE_ACHIEVEMENTS[currentIndex + 1] - totalPagesRead;
+    }
+    
+    private static int getBooksUntilNext() {
+    	int currentIndex = -1;
+    	for(int i = BOOK_ACHIEVEMENTS.length-1; i>=0; i--) {
+    		if(totalBooksRead >= BOOK_ACHIEVEMENTS[i]) {
+    			currentIndex = i;
+    			break;
+    		}
+    	}
+    	if(currentIndex == BOOK_ACHIEVEMENTS.length-1) return 0;
+    	return BOOK_ACHIEVEMENTS[currentIndex + 1] - totalBooksRead;
     }
 
     private static void loadLabels(String text, int layX, int layY, int fSize){
@@ -154,12 +201,12 @@ public class AchievementGUI {
 		if(typeIsPages) {
 			dialog.setHeaderText("New page achievement unlocked");
 			if(newIndex < 8) dialog.setContentText("Achievement earnt: " + PAGE_ACHIEVEMENTS[newIndex] + " pages read.\nNext level: " + PAGE_ACHIEVEMENTS[newIndex+1] + " pages.");
-			else dialog.setContentText("Achievement earnt: " + PAGE_ACHIEVEMENTS[newIndex] + " pages read.\\nAll page achievements now completed!");
+			else dialog.setContentText("Achievement earnt: " + PAGE_ACHIEVEMENTS[newIndex] + " pages read.\nAll page achievements now completed!");
 		}
 		else {
 			dialog.setHeaderText("New book achievement unlocked");
 			if(newIndex < 8) dialog.setContentText("Achievement earnt: " + BOOK_ACHIEVEMENTS[newIndex] + " books read.\nNext level: " + BOOK_ACHIEVEMENTS[newIndex+1] + " books.");
-			else dialog.setContentText("Achievement earnt: " + BOOK_ACHIEVEMENTS[newIndex] + " books read.\\nAll book achievements now completed!");
+			else dialog.setContentText("Achievement earnt: " + BOOK_ACHIEVEMENTS[newIndex] + " books read.\nAll book achievements now completed!");
 		}
 		dialog.showAndWait(); //the dialog must be confirmed before continuing
     }

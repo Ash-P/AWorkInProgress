@@ -115,70 +115,134 @@ public class store implements storage {
 	
 	
 	// returns book data
-	@Override
-	public ArrayList<bookData> retrieveBookData() throws IOException {
-		ArrayList<bookData> bookDataReturn = new ArrayList<>();
-		// File myFile = new File(bookStoreFileName);
-		File myFile = new File(bookStoreFileName);
-		FileReader fileIn = null;
-		fileIn = new FileReader(myFile);
-		BufferedReader input = new BufferedReader(fileIn);
-		// for(String s = bookStoreReader.readLine(); s != null; s =
-		// bookStoreReader.readLine()){
-		String s = input.readLine();
-		while (s != null) {
-			String[] properties = s.split(" ; ");
-			bookData bookdata = new bookData();
 
-			if (properties[0] == " ") {
-			} else {
-				bookdata.bookID = Integer.parseInt(properties[0]);
+		@Override
+
+		public ArrayList<bookData> retrieveBookData() throws IOException {
+
+			ArrayList<bookData> bookDataReturn = new ArrayList<>();
+
+			// File myFile = new File(bookStoreFileName);
+
+			File myFile = new File(bookStoreFileName);
+
+			FileReader fileIn = null;
+
+			fileIn = new FileReader(myFile);
+
+			BufferedReader input = new BufferedReader(fileIn);
+
+			// for(String s = bookStoreReader.readLine(); s != null; s =
+
+			// bookStoreReader.readLine()){
+
+			String s = input.readLine();
+
+			while (s != null) {
+
+				String[] properties = s.split(" ; ");
+
+				bookData bookdata = new bookData();
+
+
+
+				if (properties[0] == " ") {
+
+				} else {
+
+					bookdata.bookID = Integer.parseInt(properties[0]);
+
+				}
+
+
+
+				if (properties[0] == " ") {
+
+				} else {
+
+					bookdata.status = Integer.parseInt(properties[1]);
+
+				}
+
+
+
+				bookdata.title = properties[2];
+
+
+
+				if (properties[0] == " ") {
+
+				} else {
+
+					bookdata.pages = Integer.parseInt(properties[3]);
+
+				}
+
+
+
+				bookdata.dateAdded = properties[4];
+
+				bookdata.dateStarted = properties[5];
+
+				bookdata.dateCompleted = properties[6];
+
+				bookdata.author = properties[7];
+
+				bookdata.publisher = properties[8];
+
+				bookdata.genre = properties[10];
+
+				bookdata.description = properties[11];
+
+				
+
+				try {
+
+					if(!properties[9].trim().equals(""))
+
+						bookdata.publicationYear = Integer.parseInt(properties[9]);
+
+					else bookdata.publicationYear = -1;
+
+					if(!properties[12].trim().equals(""))
+
+						bookdata.pagesRead = Integer.parseInt(properties[12]);
+
+					else bookdata.pagesRead = 0;
+
+				} catch(NumberFormatException e) {
+
+					bookdata.publicationYear = -1;
+
+					bookdata.pagesRead = 0;
+
+				}
+
+				
+
+				try {
+
+					bookdata.pagesReadOnADate = properties[13];
+
+				} catch (Exception e) {
+
+					bookdata.pagesReadOnADate = "";
+
+				}
+
+				bookDataReturn.add(bookdata);
+
+				s = input.readLine();
+
 			}
 
-			if (properties[0] == " ") {
-			} else {
-				bookdata.status = Integer.parseInt(properties[1]);
-			}
+			fileIn.close();
 
-			bookdata.title = properties[2];
+			input.close();
 
-			if (properties[0] == " ") {
-			} else {
-				bookdata.pages = Integer.parseInt(properties[3]);
-			}
+			return bookDataReturn;
 
-			bookdata.dateAdded = properties[4];
-			bookdata.dateStarted = properties[5];
-			bookdata.dateCompleted = properties[6];
-			bookdata.author = properties[7];
-			bookdata.publisher = properties[8];
-			bookdata.genre = properties[10];
-			bookdata.description = properties[11];
-			
-			try {
-				if(!properties[9].trim().equals(""))
-					bookdata.publicationYear = Integer.parseInt(properties[9]);
-				else bookdata.publicationYear = -1;
-				if(!properties[12].trim().equals(""))
-					bookdata.pagesRead = Integer.parseInt(properties[12]);
-				else bookdata.pagesRead = 0;
-			} catch(NumberFormatException e) {
-				bookdata.publicationYear = -1;
-				bookdata.pagesRead = 0;
-			}
-			
-			try {
-				bookdata.pagesReadOnADate = properties[13];
-			} catch (Exception e) {
-				bookdata.pagesReadOnADate = "";
-			}
-			bookDataReturn.add(bookdata);
-			s = input.readLine();
 		}
-		fileIn.close();
-		input.close();
-		return bookDataReturn;
-	}
 
 	// returns a list of targets
 	@Override
@@ -248,13 +312,13 @@ public class store implements storage {
 	public void storeUserData(ArrayList<userData> newUserData) {
 		
 		try {
-			FileWriter fwUpdateFile = new FileWriter("userStore.txt", true);
+			FileWriter fwUpdateFile = new FileWriter("userStore.txt", false);
 			BufferedWriter updateFile = new BufferedWriter(fwUpdateFile);
-			updateFile.newLine();
 			for (userData u : newUserData) {
 				updateFile.append(u.userID + " ; " + u.username + " ; " + u.totalPagesRead + " ; " + u.totalBooksRead
 						+ " ; " + u.pageAchievsUnlocked + " ; " + u.bookAchievsUnlocked + " ; "
-						+ u.booksCompletedOnADate + "\n");
+						+ u.booksCompletedOnADate);
+				updateFile.newLine();
 			}
 			updateFile.close();
 			userFileReader = new BufferedReader(new InputStreamReader(new FileInputStream(userStoreFile)));
@@ -285,15 +349,14 @@ public class store implements storage {
 	@Override
 	public void storeBookData(ArrayList<bookData> newBookData) {
 		try {
-			FileWriter fwUpdateFile = new FileWriter("userStore.txt", true);
+			FileWriter fwUpdateFile = new FileWriter(bookStoreFile, false);
 			BufferedWriter updateFile = new BufferedWriter(fwUpdateFile);
-			updateFile.newLine();
-			
 			for (bookData b : newBookData) {
 				updateFile.append(b.bookID + " ; " + b.status + " ; " + b.title + " ; " + b.pages + " ; " + b.dateAdded
 						+ " ; " + b.dateStarted + " ; " + b.dateCompleted + " ; " + b.author + " ; " + b.publisher
 						+ " ; " + b.publicationYear + " ; " + b.genre + " ; " + b.description + " ; " + b.pagesRead
-						+ " ; " + b.pagesReadOnADate + "\n");
+						+ " ; " + b.pagesReadOnADate);
+				updateFile.newLine();
 			}
 			updateFile.close();
 			bookStoreReader = new BufferedReader(new InputStreamReader(new FileInputStream(bookStoreFile)));
@@ -306,12 +369,12 @@ public class store implements storage {
 	@Override
 	public void storeTargetData(ArrayList<targetData> newTargetData) {
 		try {
-			FileWriter fwUpdateFile = new FileWriter("userStore.txt", true);
+			FileWriter fwUpdateFile = new FileWriter(targetStoreFile, false);
 			BufferedWriter updateFile = new BufferedWriter(fwUpdateFile);
-			updateFile.newLine();
 			for (targetData t : newTargetData) {
 				updateFile.append(t.targetID + " ; " + t.targetType + " ; " + t.isComplete + " ; " + t.deadlineDate
-						+ " ; " + t.bookID + " ; " + t.targetValue + " ; " + t.valueRemaining + "\n");
+						+ " ; " + t.bookID + " ; " + t.targetValue + " ; " + t.valueRemaining);
+				updateFile.newLine();
 			}
 			updateFile.close();
 			targetStoreReader = new BufferedReader(new InputStreamReader(new FileInputStream(targetStoreFile)));

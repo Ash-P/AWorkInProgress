@@ -104,7 +104,7 @@ public class AchievementGUI {
         vbox.getChildren().addAll(layout);
         
         backBtn.setOnAction(e -> {
-        	ManageBooksMenu.instantiate();
+        	MAIN.instantiate();
         });
         
         group = new Group(vbox, title, backBtn);

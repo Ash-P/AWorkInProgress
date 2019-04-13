@@ -563,14 +563,15 @@ public class AddABook {
 					if (isValid && previouslyReadBox.getValue().equals("Distribute evenly")) {
 						pagesReadOnADate = distributeEvenly(pages, LocalDate.parse(dateStarted, DATE_FORMATTER),
 								LocalDate.parse(dateCompleted, DATE_FORMATTER));
-					} else if (previouslyReadBox.getValue().equals("Specify manually")) {
-						if (!pagesOnDateToStore.toString().isEmpty())
+					} /*else if (previouslyReadBox.getValue().equals("Specify manually")) {
+						if (isValid && !pagesOnDateToStore.toString().isEmpty())// CHANGED HERE, ISSUE: Checking if pagesReadOnADate isnt empty 
+																								when it should be at this point
 							pagesReadOnADate = pagesOnDateToStore.toString();
 						else
 							isValid = false;
-					} else
-						isValid = false;
-
+					} //else
+						//isValid = false;
+					*/
 					if (isValid && BookDataValidation.validateProgressFieldsPast(pages, dateStarted, dateCompleted,
 							dateRead, pagesOnDate, pagesReadOnADate)) {
 						pagesOnDateToStore.append(dateRead + "," + pagesOnDate + " ");

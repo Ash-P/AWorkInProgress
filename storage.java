@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javafx.beans.property.SimpleIntegerProperty;
 public interface storage {
 
 	
@@ -105,12 +107,23 @@ public interface storage {
 			if(isComplete) return "Yes";
 			else return "No";
 		}
+		
+		public void setDeadlineDate(String deadlineDate) {
+			this.deadlineDate = deadlineDate;
+		}
+		
 		public String getDeadlineDate() {
 			return deadlineDate;
 		}
+		
+		public void setTargetValue(int targetValue) {
+			this.targetValue = targetValue; 
+		}
+		
 		public int getTargetValue() {
 			return targetValue;
 		}
+		
 		public int getValueRemaining() {
 			return valueRemaining;
 		}

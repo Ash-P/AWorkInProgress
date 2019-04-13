@@ -2,15 +2,17 @@ import java.util.Arrays;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
+import javafx.util.converter.IntegerStringConverter;
+import javafx.util.converter.NumberStringConverter;;
 
 public class ViewTargets {
 
@@ -35,10 +37,17 @@ public class ViewTargets {
 		targetTypeCol.setCellValueFactory(new PropertyValueFactory<>("targetType"));
 		targetTypeCol.setMinWidth(100);
 		targetTypeCol.setEditable(true);
+		
+		/*
+		targetTypeCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		
 		targetTypeCol.setOnEditCommit((TableColumn.CellEditEvent<storage.targetData, Integer> e)->{
 			int index = ((TableColumn.CellEditEvent<storage.targetData, Integer>) e).getTablePosition().getRow();
 			((storage.targetData) e.getTableView().getItems().get(index)).setTargetType(e.getNewValue());
 		});
+		*/
+		
+		
 		
 		
 		
@@ -48,17 +57,27 @@ public class ViewTargets {
 		
 		
 		
+		
 		TableColumn<storage.targetData, String> deadlineDateCol = new TableColumn<storage.targetData, String>("Deadline Date");
 		deadlineDateCol.setCellValueFactory(new PropertyValueFactory<>("deadlineDate"));
 		deadlineDateCol.setMinWidth(110);
 		
+		deadlineDateCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		deadlineDateCol.setOnEditCommit((TableColumn.CellEditEvent<storage.targetData, String> e)->{
+			int index = ((TableColumn.CellEditEvent<storage.targetData, String>) e).getTablePosition().getRow();
+			((storage.targetData) e.getTableView().getItems().get(index)).setDeadlineDate(e.getNewValue());
+		});
+		
+		
 		TableColumn<storage.targetData, Integer> targetValueCol = new TableColumn<storage.targetData, Integer>("Target Value");
 		targetValueCol.setCellValueFactory(new PropertyValueFactory<>("targetValue"));
 		targetValueCol.setMinWidth(100);
-		targetTypeCol.setOnEditCommit((TableColumn.CellEditEvent<storage.targetData, Integer> e)->{
+		
+		
+		targetValueCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		targetValueCol.setOnEditCommit((TableColumn.CellEditEvent<storage.targetData, Integer> e)->{
 			int index = ((TableColumn.CellEditEvent<storage.targetData, Integer>) e).getTablePosition().getRow();
-			((storage.targetData) e.getTableView().getItems().get(index)).setTargetType(e.getNewValue());
-			
+			((storage.targetData) e.getTableView().getItems().get(index)).setTargetValue(e.getNewValue());
 		});
 		
 		
@@ -73,6 +92,7 @@ public class ViewTargets {
 		table.setEditable(true);
 		table.setPrefWidth(580);
 		table.getColumns().addAll( Arrays.asList(targetTypeCol, isCompleteCol, deadlineDateCol, targetValueCol, valueRemainingCol) );
+		
 		
 		
 		GridPane.setConstraints(table, 0, 1);
@@ -90,5 +110,7 @@ public class ViewTargets {
 	             
 
 	}
+	
+	
 	
 }

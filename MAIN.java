@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;  
@@ -51,18 +52,19 @@ public class MAIN extends Application {
 	
 	
 	public static void saveData() {
+
+		
 		storageObj.storeBookData(alldata.bookStore);
+		storageObj.storeTargetData(alldata.targetStore);
 		
 		for(storage.userData user: allusers) {
 			if(user.userID == alldata.userStore.userID) {
 				int indexToReplace = allusers.indexOf(user);
-				allusers.set(indexToReplace, alldata.userStore);
-				storageObj.storeUserData(allusers);
-				break;
+				allusers.set(indexToReplace, alldata.userStore);	
 			}
 		}
-		
-		storageObj.storeTargetData(alldata.targetStore);
+		storageObj.storeUserData(allusers);
+	
 	}
 	
 	public static Map<String, Integer> getBooksRead(){
@@ -230,6 +232,10 @@ public class MAIN extends Application {
 				alldata.userStore = item;				
 			}
 		}
+		
+		for(storage.bookData item: alldata.bookStore) {
+			System.out.println(item.status);
+		}
 		instantiate();
 	}
 	
@@ -252,6 +258,8 @@ public class MAIN extends Application {
 				alldata.userStore = item;				
 			}
 		}*/
+		
+		LocalDate test = LocalDate.now();
 		
 		try {
 			allusers = store.staticRetrieveUserData();

@@ -124,7 +124,7 @@ public class DisplayChart {
 			GenerateGraph graph = new GenerateGraph(xAxis, yAxis, title, dataToDisplay);
 			graph.setLayoutX(50);
 			graph.setLayoutY(180);
-			Group root = new Group(graph, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl, refresh);
+			Group root = new Group(back, graph, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl, refresh);
 			Scene scene = new Scene(root, 640, 600);	
 			MAIN.mainStage.setScene(scene);
 			
@@ -162,7 +162,7 @@ public class DisplayChart {
 			graph.setLayoutX(50);
 			graph.setLayoutY(180);
 			
-			Group root = new Group(graph, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl, refresh);
+			Group root = new Group(back, graph, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl, refresh);
 			Scene scene = new Scene(root, 640, 600);
 
 			

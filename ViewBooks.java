@@ -1,3 +1,4 @@
+
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -60,7 +61,7 @@ public class ViewBooks {
 		TableColumn<storage.bookData, String> bookPublisher = new TableColumn<>("Publisher");
 		bookPublisher.setCellValueFactory(new PropertyValueFactory<>("publisher"));
 
-		TableColumn<storage.bookData, Integer> bookPublishYear = new TableColumn<>("Published Year");
+		TableColumn<storage.bookData, String> bookPublishYear = new TableColumn<>("Published Year");
 		bookPublishYear.setCellValueFactory(new PropertyValueFactory<>("publicationYear"));
 
 		TableColumn<storage.bookData, String> bookGenre = new TableColumn<>("Book Genre");
@@ -79,6 +80,10 @@ public class ViewBooks {
 
 		// bookTable.getColumns().addAll(bookStatus);
 
+		back.setLayoutX(10);
+		back.setLayoutY(560);
+		
+		
 		title.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
 		title.setLayoutX(440);
 		title.setLayoutY(15);
@@ -88,8 +93,8 @@ public class ViewBooks {
 		vbox.setPadding(new Insets(90, 0, 0, 10));
 		vbox.getChildren().addAll(categoryComboBox, items, bookTable);
 		setupHandles();
-		Group root = new Group(vbox, title);
-		Scene scene = new Scene(root, 1004, 580);
+		Group root = new Group(back, vbox, title);
+		Scene scene = new Scene(root, 1037, 596);
 		MAIN.mainStage.setScene(scene);
 
 	}
@@ -198,8 +203,7 @@ public class ViewBooks {
 		
 		
 		back.setOnAction(e -> {
-			// MAIN.mainStage.setScene(MAIN.mainScene);
-			MAIN.instantiate();
+			ManageBooksMenu.instantiate();
 		});
 
 	}

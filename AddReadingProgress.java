@@ -35,7 +35,7 @@ public class AddReadingProgress {
 	public AddReadingProgress() {
 		createUI();
 		setupHandles();
-		scene = new Scene(group, 600, 350);
+		scene = new Scene(group, 347, 180);
 		//Y = WINDOWY-42
 		MAIN.mainStage.setScene(scene);
 		MAIN.mainStage.setTitle("Add Reading Progress");

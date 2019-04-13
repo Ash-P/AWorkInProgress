@@ -332,11 +332,11 @@ public class store implements storage {
 		try {
 			FileWriter fwUpdateFile = new FileWriter("userStore.txt", true);
 			BufferedWriter updateFile = new BufferedWriter(fwUpdateFile);
+			updateFile.newLine();
 			
-			
-			updateFile.append("\n" + u.userID + " ; " + u.username + " ; " + u.totalPagesRead + " ; " + u.totalBooksRead
+			updateFile.append(u.userID + " ; " + u.username + " ; " + u.totalPagesRead + " ; " + u.totalBooksRead
 					+ " ; " + u.pageAchievsUnlocked + " ; " + u.bookAchievsUnlocked + " ; " + u.booksCompletedOnADate
-					+ "\n");
+					);
 
 			updateFile.close();
 	

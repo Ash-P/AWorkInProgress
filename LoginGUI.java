@@ -168,7 +168,7 @@ public class LoginGUI{
     	newUser.pageAchievsUnlocked = -1;
     	newUser.totalBooksRead = 0;
     	newUser.totalPagesRead = 0;
-    	newUser.booksCompletedOnADate = " ";
+    	newUser.booksCompletedOnADate = "";
     	
     	store.storeSingleUser(newUser);
     	MAIN.begin(Username);

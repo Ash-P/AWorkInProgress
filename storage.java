@@ -49,11 +49,14 @@ public interface storage {
 		public String getAuthor() {
 			return author;
 		}
-		public String getPublisher() {
-			return publisher;
+		public String getPublisher() {	
+			return publisher;	
 		}
-		public int getPublicationYear() {
-			return publicationYear;
+		public String getPublicationYear() {
+			if(this.publicationYear == -1) {
+				return " ";
+			}
+			return Integer.toString(this.publicationYear);
 		}
 		public int getPages() {
 			return pages;
@@ -117,11 +120,22 @@ public interface storage {
 		}
 		
 		public void setTargetValue(int targetValue) {
+			
+			
+			
+			this.valueRemaining += (targetValue - this.targetValue);
+			//this.valueRemaining = Math.max((this.valueRemaining - this.targetValue), 0); 
+			
+			if(this.valueRemaining == 0) {
+				this.isComplete = true;
+				AddATarget.targetCompleted(this, 3);
+			}
 			this.targetValue = targetValue; 
 		}
 		
 		public int getTargetValue() {
 			return targetValue;
+			
 		}
 		
 		public int getValueRemaining() {

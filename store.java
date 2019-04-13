@@ -237,7 +237,9 @@ public class store implements storage {
 	public void storeUserData(ArrayList<userData> newUserData) {
 		
 		try {
-			FileWriter updateFile = new FileWriter(userStoreFile, false);
+			FileWriter fwUpdateFile = new FileWriter("userStore.txt", true);
+			BufferedWriter updateFile = new BufferedWriter(fwUpdateFile);
+			updateFile.newLine();
 			for (userData u : newUserData) {
 				updateFile.append(u.userID + " ; " + u.username + " ; " + u.totalPagesRead + " ; " + u.totalBooksRead
 						+ " ; " + u.pageAchievsUnlocked + " ; " + u.bookAchievsUnlocked + " ; "
@@ -272,7 +274,10 @@ public class store implements storage {
 	@Override
 	public void storeBookData(ArrayList<bookData> newBookData) {
 		try {
-			FileWriter updateFile = new FileWriter(bookStoreFile, false);
+			FileWriter fwUpdateFile = new FileWriter("userStore.txt", true);
+			BufferedWriter updateFile = new BufferedWriter(fwUpdateFile);
+			updateFile.newLine();
+			
 			for (bookData b : newBookData) {
 				updateFile.append(b.bookID + " ; " + b.status + " ; " + b.title + " ; " + b.pages + " ; " + b.dateAdded
 						+ " ; " + b.dateStarted + " ; " + b.dateCompleted + " ; " + b.author + " ; " + b.publisher
@@ -290,7 +295,9 @@ public class store implements storage {
 	@Override
 	public void storeTargetData(ArrayList<targetData> newTargetData) {
 		try {
-			FileWriter updateFile = new FileWriter(targetStoreFile, false);
+			FileWriter fwUpdateFile = new FileWriter("userStore.txt", true);
+			BufferedWriter updateFile = new BufferedWriter(fwUpdateFile);
+			updateFile.newLine();
 			for (targetData t : newTargetData) {
 				updateFile.append(t.targetID + " ; " + t.targetType + " ; " + t.isComplete + " ; " + t.deadlineDate
 						+ " ; " + t.bookID + " ; " + t.targetValue + " ; " + t.valueRemaining + "\n");

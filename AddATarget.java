@@ -220,9 +220,9 @@ public class AddATarget {
 					Date date = Calendar.getInstance().getTime();
 					try {
 						if(DATE_FORMAT.parse(t.deadlineDate).after(date)) {
-							targetCompleted(t, true);
+							targetCompleted(t, 1);
 						}
-						else targetCompleted(t, false);
+						else targetCompleted(t, 2);
 					} catch (ParseException e) {
 					}
 				}
@@ -235,9 +235,9 @@ public class AddATarget {
 					Date date = Calendar.getInstance().getTime();
 					try {
 						if(DATE_FORMAT.parse(t.deadlineDate).after(date)) {
-							targetCompleted(t, true);
+							targetCompleted(t, 1);
 						}
-						else targetCompleted(t, false);
+						else targetCompleted(t, 2);
 					} catch (ParseException e) {
 					}
 				}	
@@ -249,9 +249,9 @@ public class AddATarget {
 					Date date = Calendar.getInstance().getTime();
 					try {
 						if(DATE_FORMAT.parse(t.deadlineDate).after(date)) {
-							targetCompleted(t, true);
+							targetCompleted(t, 1);
 						}
-						else targetCompleted(t, false);
+						else targetCompleted(t, 2);
 					} catch (ParseException e) {
 					}
 				}
@@ -259,13 +259,17 @@ public class AddATarget {
 		}
 	}
 	
-	
-	private static void targetCompleted(storage.targetData target, Boolean completedOnTime) {
+	/**
+	 * @param target : the target objects
+	 * @param completedOnTime : : 1=yes, 2=no, 3=unspecified
+	 */
+	public static void targetCompleted(storage.targetData target, int completedOnTime) {
 		Alert dialog = new Alert(AlertType.INFORMATION);
 		dialog.setTitle("Target Completed");
 		
-		if(completedOnTime) dialog.setHeaderText("A target has been completed on time");
-		else dialog.setHeaderText("A target has been completed after the deadline date");
+		if(completedOnTime == 1) dialog.setHeaderText("A target has been completed on time");
+		else if(completedOnTime == 2) dialog.setHeaderText("A target has been completed after the deadline date");
+		else dialog.setHeaderText("A target has been completed");
 		
 		if(target.targetType == 1) dialog.setContentText("Target completed: Read " + target.targetValue + " pages of the book " + MAIN.getBookTitle(target.bookID) + " by " + target.deadlineDate + ".");
 		else if(target.targetType == 2) dialog.setContentText("Target completed:\nRead " + target.targetValue + " pages across all books by " + target.deadlineDate + ".");

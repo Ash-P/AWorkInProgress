@@ -112,12 +112,14 @@ public class LoginGUI{
     
     public static void setupHandles() {
     	button.setOnAction(e->{
-    		
-    		
-    		   String username = enterUser.getText();
-               System.out.println(username);
-               readFile(username);
-    		
+    			
+    		  String username = enterUser.getText();
+    		  if(!username.trim().equals("") && BookDataValidation.validBookDataString(username)) {
+    			   System.out.println(username);
+                   readFile(username);
+    		   };
+    		        
+ 
     	});
     	
     }

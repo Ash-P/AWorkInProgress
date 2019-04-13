@@ -3,7 +3,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -19,9 +18,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 /**
  * Includes UI elements and functionality for adding a target,
@@ -30,8 +32,8 @@ import javafx.scene.layout.GridPane;
  * @author Blelloch
  */
 public class AddATarget {
-	
-	private boolean validData = true;
+
+	private final Label title = new Label("Add a Target");
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private final ComboBox<String> targetTypeBox = new ComboBox<>();
@@ -39,16 +41,18 @@ public class AddATarget {
 	private final DatePicker deadlineDatePicker = new DatePicker();
 	private final TextField targetValueTxt = new TextField();
 	private final ComboBox<String> createCalEventBox = new ComboBox<>();
-	private final Button submitBtn = new Button();
-	private final Button clearBtn = new Button();
+	private final Button submitBtn = new Button("Submit");
+	private final Button clearBtn = new Button("Clear");
+	private final Button backBtn = new Button("Back");
 	private Scene scene;
 	private Group group;
+	private boolean validData = true;
 	
 	public AddATarget() {
 		createUI();
 		setupHandles();
 
-		scene = new Scene(group, 600, 350);
+		scene = new Scene(group, 600, 250);
 		MAIN.mainStage.setScene(scene);
 		MAIN.mainStage.setTitle("Add a Target");
 	}
@@ -85,13 +89,19 @@ public class AddATarget {
 		createCalEventBox.getItems().add("No");
 		GridPane.setConstraints(createCalEventBox, 0, 5);
 
-		submitBtn.setText("Submit");
 		submitBtn.setLayoutX(300);
 		submitBtn.setLayoutY(170);
 
-		clearBtn.setText("Clear");
 		clearBtn.setLayoutX(360);
 		clearBtn.setLayoutY(170);
+		
+		title.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
+		title.setLayoutX(210); //for 650
+		title.setLayoutY(15);
+
+		backBtn.setLayoutX(15);
+		backBtn.setLayoutY(208);
+		
 
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -99,7 +109,7 @@ public class AddATarget {
 		grid.setHgap(5);
 		grid.getChildren().addAll(targetTypeBox,bookTitleBox,deadlineDatePicker,targetValueTxt,createCalEventBox);
 
-		group = new Group(grid,submitBtn,clearBtn);
+		group = new Group(grid,submitBtn,clearBtn, backBtn);
 	}
 	
 	private void setupHandles() {
@@ -157,6 +167,10 @@ public class AddATarget {
 					targetValueTxt.setStyle("-fx-text-inner-color: black;");
 				}
 			}
+		});
+		
+		backBtn.setOnAction(e -> {
+			TargetsMenu.instantiate();
 		});
 
 	}

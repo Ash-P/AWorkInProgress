@@ -52,7 +52,6 @@ public class MAIN extends Application {
 	
 	
 	public static void saveData() {
-
 		
 		storageObj.storeBookData(alldata.bookStore);
 		storageObj.storeTargetData(alldata.targetStore);

@@ -91,7 +91,8 @@ public class ViewTargets {
 		table.setPrefWidth(580);
 		table.getColumns().addAll( Arrays.asList(targetTypeCol, isCompleteCol, deadlineDateCol, targetValueCol, valueRemainingCol) );
 		
-		
+		back.setLayoutX(8);
+		back.setLayoutY(420);
 		
 		GridPane.setConstraints(table, 0, 1);
 		
@@ -101,13 +102,16 @@ public class ViewTargets {
 		grid.setHgap(5);
 		grid.getChildren().addAll(table);
 		
-		group = new Group(grid);
+		group = new Group(back, grid);
 		
 		scene = new Scene(group, 600, 450);
 		MAIN.mainStage.setScene(scene);
 		MAIN.mainStage.setTitle("View Targets");
 		
 	             
+		back.setOnAction(e->{
+			TargetsMenu.instantiate();
+		});
 
 	}
 	

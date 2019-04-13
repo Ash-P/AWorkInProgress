@@ -10,7 +10,7 @@ public class BookDataValidation {
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	
 	protected static boolean validBookDataString(String string) {
-		if(string.contains("@") || string.contains(";")) {
+		if(string.contains(";")) {
 			return false;
 		}
 		return true;
@@ -83,6 +83,7 @@ public class BookDataValidation {
 		try {
 			if(SIMPLE_DATE_FORMAT.parse(dateStarted).compareTo(SIMPLE_DATE_FORMAT.parse(dateRead)) > 0) return false; //prevent dateStarted being after dateRead
 			if(SIMPLE_DATE_FORMAT.parse(dateRead).compareTo(SIMPLE_DATE_FORMAT.parse(dateCompleted)) > 0) return false; //prevent dateRead being after dateCompleted
+			
 		} catch (ParseException e) {
 		}
 		if(pagesOnDate + getTotalPagesReadOnDates(pagesReadOnADate) > pages) return false;

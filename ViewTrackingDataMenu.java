@@ -45,6 +45,9 @@ public class ViewTrackingDataMenu {
 		Group root = new Group(graphs, statistics, back, save, title);
 		Scene mainScene = new Scene(root, 640, 320);
 		MAIN.mainStage.setScene(mainScene);
+		
+		
+		
 
 	}
 

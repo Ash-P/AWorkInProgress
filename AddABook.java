@@ -643,12 +643,14 @@ public class AddABook {
 		});
 		
 		additionalBookInfoBtn.setOnAction(e -> {
-			if (additionalBookInfoBtn.getText() == "View Optional Fields")
-				additionalBookInfoBtn.setText("Hide Optional Fields");
+			if (additionalBookInfoBtn.getText() == "View Optional Fields") {
+                additionalBookInfoBtn.setText("Hide Optional Fields");
+                changeVisibility(bookDescriptionTxt, bookGenreTxt, bookAuthorTxt, bookPublicationYearTxt, bookPublisherTxt);
+            }
 			else {
-				additionalBookInfoBtn.setText("View Optional Fields");
-				changeVisibility(bookDescriptionTxt, bookGenreTxt, bookAuthorTxt, bookPublicationYearTxt, bookPublisherTxt);
-			}
+                additionalBookInfoBtn.setText("View Optional Fields");
+                changeVisibility(bookDescriptionTxt, bookGenreTxt, bookAuthorTxt, bookPublicationYearTxt, bookPublisherTxt);
+            }
 		});
 		additionalBookInfoBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
 			if (ev.getCode() == KeyCode.ENTER) {

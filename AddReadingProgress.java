@@ -31,9 +31,7 @@ public class AddReadingProgress {
 	private final Button clearBtn = new Button();
 	private Scene scene;
 	private Group group;
-	private Alert dialog = new Alert(AlertType.INFORMATION);
 	public static Button backBtn = new Button("Back");
-	
 	
 	public AddReadingProgress() {
 		createUI();
@@ -100,33 +98,27 @@ public class AddReadingProgress {
 					int pagesRemaining = book.pages - book.pagesRead;
 					if(validateFields(status, pagesRemaining, book.dateStarted, date, pages)) {
 						alldata.userStore.totalPagesRead += pages;
-						book.pagesRead = book.pagesRead + pages;
-						book.pagesReadOnADate +=  " " + date + "," + pages;
-						if(book.pagesRead == book.pages) { 
+						book.pagesRead += pages;
+						book.pagesReadOnADate +=  (" " + date + "," + pages);
+						if(book.status == 1 && book.pagesRead == book.pages) {
 							book.status = 0;
 							book.dateCompleted = date;
 							alldata.userStore.totalBooksRead++;
+							MAIN.createAlert(AlertType.INFORMATION, "Status Change", "Finished reading a book", "Status of book " + book.title + " has changed to 'Previously Read'.");
 						}
-						else if(book.pagesRead == 0) {
+						else if(book.status == 2) {
 							book.status = 1;
 							book.dateStarted = date;
+							MAIN.createAlert(AlertType.INFORMATION, "Status Change", "Begun reading a book", "Status of book " + book.title + " has changed to 'Currently Reading'.");
 						}
 						AddATarget.updateTargets(pages, book.bookID, status == 0); //updates and checks for completion of targets
-						//TODO update and check for completion of achievements
+						ViewAchievements.updateAchievements();
 						
-						//success dialog
-						dialog.setTitle("Success");
-						dialog.setHeaderText("Reading progress added successfully");
-						dialog.setContentText("You have successfully added reading progress of\n" + pages + " pages of " + bookTitle + " on " + date + ".");
-						dialog.showAndWait();
+						MAIN.createAlert(AlertType.INFORMATION, "Validation Successful", "Reading progress has been added successfully", "You have successfully added reading progress of\n" + pages + " pages of " + bookTitle + " on " + date + ".");
 						return;
 					}
 				}
-				MAIN.createAlert(AlertType.ERROR, "Error", "Reading progress validation unsuccessful", ""); //TODO
-				dialog.setTitle("Failure");
-				dialog.setHeaderText("Reading progress not added");
-				dialog.setContentText("You have failed to successfully add reading progress to " + bookTitle + ".");
-				dialog.showAndWait();
+				MAIN.createAlert(AlertType.ERROR, "Error", "Reading progress validation unsuccessful", "You have failed to successfully add reading progress to " + bookTitle + ".");
 			}
 		});
 		addBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {

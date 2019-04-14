@@ -455,7 +455,7 @@ public class AddABook {
 				if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description) && BookDataValidation.validateFieldsPrevious(pages, pagesReadOnADate)) {
 					addNewPreviousBook(title, pages, dateStarted, dateCompleted, pagesReadOnADate, author, publisher, publicationYear, genre, description);
 					MAIN.createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
-					ViewAchievements.updateTargets();
+					ViewAchievements.updateAchievements();
 					clearFields(false);
 				}
 			}
@@ -493,7 +493,7 @@ public class AddABook {
 				if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description) && BookDataValidation.validateFieldsCurrent(pages, pagesRead, pagesReadOnADate)) {
 					addNewCurrentBook(title, pages, dateStarted, pagesRead, pagesReadOnADate, author, publisher, publicationYear, genre, description);
 					MAIN.createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
-					ViewAchievements.updateTargets();
+					ViewAchievements.updateAchievements();
 					clearFields(false);
 				}
 			}
@@ -503,7 +503,7 @@ public class AddABook {
 				if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description)) {
 					addNewFutureBook(title, pages, author, publisher, publicationYear, genre, description);
 					MAIN.createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
-					ViewAchievements.updateTargets();
+					ViewAchievements.updateAchievements();
 					clearFields(false);	
 				}
 			}

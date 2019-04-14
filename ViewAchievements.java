@@ -19,22 +19,23 @@ public class ViewAchievements {
 	
 	public static final int[] PAGE_ACHIEVEMENTS = { 1, 10, 50, 100, 250, 500, 1000, 5000, 10000 };
 	public static final int[] BOOK_ACHIEVEMENTS = { 1, 5, 10, 25, 50, 100, 150, 250, 500 };
-	private static int totalPagesRead = alldata.userStore.totalPagesRead;
-	private static int totalBooksRead = alldata.userStore.totalBooksRead;
-	private final Label title = new Label("Achievements");
-	private final Button backBtn = new Button("Back");
+	private static final Label title = new Label("Achievements");
+	private static final Button backBtn = new Button("Back");
 	
 	private static Circle p1, p10, p50, p100, p250, p500, p1000, p5000, p10000;
     private static Circle b1, b5, b10, b25, b50, b100, b150, b250, b500;
+    private static int totalPagesRead;
+	private static int totalBooksRead;
     private static boolean isDone;
     private static AnchorPane layout = new AnchorPane();
     private static Group group;
-
-    
-    //TODO check if has been awarded already when isDone=true
-    //TODO alerts - for newly completed achievements
+    private static Label pagesReadLabel = new Label();
+    private static Label pagesUntilNextLabel = new Label();
+    private static Label booksReadLabel = new Label();
+    private static Label booksUntilNextLabel = new Label();
     
     public ViewAchievements() {
+    	layout = new AnchorPane();    	
     	createUI();
     	
         Scene scene = new Scene(group,650,480);
@@ -43,6 +44,9 @@ public class ViewAchievements {
     }
     
     private void createUI() {
+    	totalPagesRead = alldata.userStore.totalPagesRead;
+    	totalBooksRead = alldata.userStore.totalBooksRead;
+    	
         p1 = createACircle(40, 121, getPageIsMet(1));
         p10 = createACircle(125, 121, getPageIsMet(10));
         p50 = createACircle(216, 121, getPageIsMet(50));
@@ -83,10 +87,35 @@ public class ViewAchievements {
         loadLabels("150",353,267,13);
         loadLabels("250", 444,267,13);
         loadLabels("500",528,267,13);     
-        loadLabels("Your pages read: " + totalPagesRead, 25, 329, 15);
-        loadLabels("Pages until next achievement: " + getPagesUntilNext(), 25, 360, 15);
-        loadLabels("Your books read: " + totalBooksRead, 337, 329, 15);
-        loadLabels("Books until next achievement: " + getBooksUntilNext(), 337, 360, 15);
+        //loadLabels("Your pages read: " + totalPagesRead, 25, 329, 15);
+        //loadLabels("Pages until next achievement: " + getPagesUntilNext(), 25, 360, 15);
+        //loadLabels("Your books read: " + totalBooksRead, 337, 329, 15);
+        //loadLabels("Books until next achievement: " + getBooksUntilNext(), 337, 360, 15);
+        
+       
+        pagesReadLabel.setText("Your pages read: " + totalPagesRead);
+        pagesReadLabel.setLayoutX(25);
+        pagesReadLabel.setLayoutY(329);
+        pagesReadLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        layout.getChildren().add(pagesReadLabel);
+        
+        pagesUntilNextLabel.setText("Pages until next achievement: " + getPagesUntilNext());
+        pagesUntilNextLabel.setLayoutX(25);
+        pagesUntilNextLabel.setLayoutY(360);
+        pagesUntilNextLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        layout.getChildren().add(pagesUntilNextLabel);
+        
+        booksReadLabel.setText("Your books read: " + totalBooksRead);
+        booksReadLabel.setLayoutX(337);
+        booksReadLabel.setLayoutY(329);
+        booksReadLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        layout.getChildren().add(booksReadLabel);
+        
+        booksUntilNextLabel.setText("Books until next achievement: " + getBooksUntilNext());
+        booksUntilNextLabel.setLayoutX(337);
+        booksUntilNextLabel.setLayoutY(360);
+        booksUntilNextLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        layout.getChildren().add(booksUntilNextLabel);
         
         title.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));       
         title.setLayoutX(250);
@@ -142,7 +171,7 @@ public class ViewAchievements {
         Label label = new Label(text);
         label.setLayoutX(layX);
         label.setLayoutY(layY);
-        label.setFont(Font.font("System", FontWeight.BOLD,fSize));
+        label.setFont(Font.font("Verdana", FontWeight.BOLD,fSize));
         label.setAlignment(Pos.CENTER_LEFT);
 
         layout.getChildren().add(label);
@@ -171,7 +200,7 @@ public class ViewAchievements {
         return circle;
     }
     
-    public static void updateTargets() {
+    public static void updateAchievements() {
     	int totalPagesRead = alldata.userStore.totalPagesRead;
     	int totalBooksRead = alldata.userStore.totalBooksRead;
     	int pageAchievsUnlocked = alldata.userStore.pageAchievsUnlocked;

@@ -18,8 +18,8 @@ import javafx.util.converter.IntegerStringConverter;
 public class ViewTargets {
 
 	private static final Button backBtn = new Button("Back");
-	private static TableView<storage.targetData> table = new TableView<storage.targetData>();
-	private static TableColumn<storage.targetData, Integer> targetValueCol = new TableColumn<>();
+	private final TableView<storage.targetData> table = new TableView<storage.targetData>();
+	TableColumn<storage.targetData, Integer> targetValueCol = new TableColumn<>();
 	private Scene scene;
 	private Group group;
 	

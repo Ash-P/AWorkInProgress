@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class CreateCSV {
 	private static final String FILENAME = "GoogleCalendarEvent.csv";
@@ -11,6 +13,7 @@ public class CreateCSV {
 	private static final String SUBJECT = "Face-In-Book Reading Target";
 	private static final DateFormat UK_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private static final DateFormat US_DATE_FORMAT = new SimpleDateFormat("MM-dd-yyyy");
+	
 	
 	public static void createCSV(storage.targetData targetObj) {
 		String description = "";
@@ -32,27 +35,21 @@ public class CreateCSV {
 			int targetValue = alldata.userStore.totalBooksRead + targetObj.targetValue;
 			description = "Have read " + targetValue + " books in total.";
 		}
-		
+		System.out.println(targetObj.deadlineDate);
 		try {
 			String formattedDate = US_DATE_FORMAT.format(UK_DATE_FORMAT.parse(targetObj.deadlineDate));
 			fileWriter = new FileWriter(FILENAME);
 			bufferedWriter = new BufferedWriter(fileWriter);
 			bufferedWriter.write(HEADER);
+			System.out.println("Writing: "+ SUBJECT + "," + formattedDate + "," + description);
 			bufferedWriter.write(SUBJECT + "," + formattedDate + "," + description);
 			bufferedWriter.close();
 		} catch (ParseException e) {
+			System.out.println(e.getMessage());
 		} catch(IOException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 	
-	/*
-	public static void main(String[] args)  {
-		storage.targetData test = new storage.targetData();
-		test.targetType = 3;
-		test.deadlineDate = "11-07-2019";
-		test.targetValue = 5;
-		CreateCSV.createCSV(test);
-	}
-	*/
-	
+
 }

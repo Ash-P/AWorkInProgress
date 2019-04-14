@@ -149,7 +149,6 @@ public class AddABook {
 		pagesOnDateTxt.setDisable(true);
 		GridPane.setConstraints(pagesOnDateTxt, 0, 9);
 
-		//addBtn.setText("Add");
 		addBtn.setDisable(true);
 		GridPane.setConstraints(addBtn, 1, 9);
 
@@ -348,6 +347,29 @@ public class AddABook {
 				dateReadPicker.setDisable(true);
 				pagesOnDateTxt.setDisable(true);
 				addBtn.setDisable(true);
+				if(previouslyReadBox.getValue() == "Distribute evenly") {
+					int pages = -1;
+					if (!bookPagesTxt.getText().isEmpty()) {
+						try {
+							pages = Integer.parseInt(bookPagesTxt.getText());
+						} catch (NumberFormatException ex) {
+							MAIN.createAlert(AlertType.ERROR, "Error", "Distribute evenly validation unsuccessful", "Book pages invalid.\nMust be a positive integer.");
+						}
+					} else {
+						MAIN.createAlert(AlertType.ERROR, "Error", "Distribute evenly validation unsuccessful", "Book pages not entered.\nMust be specified for adding reading history to books.");
+					}
+					
+					if(pages >= 1) {
+						if(statusBox.getValue() == "Read Previously") {
+							pagesReadOnADate = distributeEvenly(pages, LocalDate.parse(dateStartedPicker.getValue().format(DATE_FORMATTER), DATE_FORMATTER), LocalDate.parse(dateCompletedPicker.getValue().format(DATE_FORMATTER), DATE_FORMATTER));
+						}
+						else if(statusBox.getValue() == "Currently Reading") {
+							pagesReadOnADate = distributeEvenly(pages, LocalDate.parse(dateStartedPicker.getValue().format(DATE_FORMATTER), DATE_FORMATTER), LocalDate.now());
+						}
+						System.out.println("pagesReadOnADate: " + pagesReadOnADate); //Test
+					}
+					else MAIN.createAlert(AlertType.ERROR, "Error", "Distribute evenly validation unsuccessful", "Book pages invalid.\nMust be a positive integer.");
+				}
 			}
 		});
 		dateStartedPicker.setOnAction(e -> {
@@ -583,19 +605,12 @@ public class AddABook {
 					String dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);
 					String dateCompleted = dateCompletedPicker.getValue().format(DATE_FORMATTER);
 					
-					if(isValid) {
-						if (previouslyReadBox.getValue().equals("Distribute evenly")) {
-							pagesReadOnADate = distributeEvenly(pages, LocalDate.parse(dateStarted, DATE_FORMATTER), LocalDate.parse(dateCompleted, DATE_FORMATTER));
-							MAIN.createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Distributed " + pages + " pages over all days from " + dateStarted + " to " + dateCompleted);
-						}
-						if (previouslyReadBox.getValue().equals("Specify manually")) {
-							pagesOnDateToStore.append(dateRead + "," + pagesOnDate + " ");
-							pagesReadOnADate = pagesOnDateToStore.toString();	
-							MAIN.createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Added " + pagesOnDate + " pages on " + dateRead + " to the system.\n" + (pages - getTotalPagesReadOnDates(pagesReadOnADate)) + " pages remaining."); 
-							System.out.println(pagesReadOnADate); // Test
-							clearFields(true);
-						}
-						else MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Previously read dates option not selected.\nMust select either 'Specify Manually' or 'Distribute Evenly'.");
+					if(isValid && previouslyReadBox.getValue().equals("Specify manually")) {
+						pagesOnDateToStore.append(dateRead + "," + pagesOnDate + " ");
+						pagesReadOnADate = pagesOnDateToStore.toString();	
+						MAIN.createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Added " + pagesOnDate + " pages on " + dateRead + " to the system.\n" + (pages - getTotalPagesReadOnDates(pagesReadOnADate)) + " pages remaining."); 
+						System.out.println(pagesReadOnADate); // Test
+						clearFields(true);
 					}
 					else MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Previously read dates option not selected.\nMust select either 'Specify Manually' or 'Distribute Evenly'.");
 				}

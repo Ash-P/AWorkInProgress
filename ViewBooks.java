@@ -18,11 +18,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 public class ViewBooks {
-	private static final Label title = new Label("View Book Data");
-	private static final Button backBtn = new Button("Back");
-	private static ComboBox<String> categoryComboBox = new ComboBox<>();
-	private static ComboBox<String> items = new ComboBox<>();
-	private static TableView<storage.bookData> bookTable = new TableView<>();
+	private final Label title = new Label("View Book Data");
+	private final Button backBtn = new Button("Back");
+	private TableView<storage.bookData> bookTable = new TableView<>();
+	private ComboBox<String> categoryComboBox = new ComboBox<>();
+	private ComboBox<String> items = new ComboBox<>();
 
 	public ViewBooks() {
 		MAIN.mainStage.setTitle("View Books");

@@ -33,16 +33,18 @@ public class ViewTargets {
 		
 		TableColumn<storage.targetData, Integer> targetTypeCol = new TableColumn<storage.targetData, Integer>("Target Type");
 		targetTypeCol.setCellValueFactory(new PropertyValueFactory<>("targetType"));
-		targetTypeCol.setMinWidth(140);
+		targetTypeCol.setMinWidth(210);
 		targetTypeCol.setEditable(true);
 		
 		TableColumn<storage.targetData, Boolean> isCompleteCol = new TableColumn<storage.targetData, Boolean>("Completed");
 		isCompleteCol.setCellValueFactory(new PropertyValueFactory<>("isComplete"));
 		isCompleteCol.setMinWidth(90);
+		isCompleteCol.setMaxWidth(90);
 
 		TableColumn<storage.targetData, String> deadlineDateCol = new TableColumn<storage.targetData, String>("Deadline Date");
 		deadlineDateCol.setCellValueFactory(new PropertyValueFactory<>("deadlineDate"));
 		deadlineDateCol.setMinWidth(110);
+		deadlineDateCol.setMaxWidth(110);
 		
 		deadlineDateCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		deadlineDateCol.setOnEditCommit((TableColumn.CellEditEvent<storage.targetData, String> e)->{
@@ -53,17 +55,19 @@ public class ViewTargets {
 		targetValueCol = new TableColumn<storage.targetData, Integer>("Target Value");
 		targetValueCol.setCellValueFactory(new PropertyValueFactory<>("targetValue"));
 		targetValueCol.setMinWidth(100);
+		targetValueCol.setMaxWidth(100);
 	
 		TableColumn<storage.targetData, Integer> valueRemainingCol = new TableColumn<storage.targetData, Integer>("Value Remaining");
 		valueRemainingCol.setCellValueFactory(new PropertyValueFactory<>("valueRemaining"));
 		valueRemainingCol.setMinWidth(140);
+		valueRemainingCol.setMaxWidth(140);
 		
 		ObservableList<storage.targetData> observableTargetList = FXCollections.observableArrayList();
 		for(storage.targetData t : alldata.targetStore) observableTargetList.add(t);
 		table.setItems(observableTargetList);
 		
 		table.setEditable(true);
-		table.setPrefWidth(580);
+		table.setPrefWidth(650);
 		table.getColumns().addAll( Arrays.asList(targetTypeCol, isCompleteCol, deadlineDateCol, targetValueCol, valueRemainingCol) );
 		GridPane.setConstraints(table, 0, 1);
 		
@@ -78,7 +82,7 @@ public class ViewTargets {
 		
 		group = new Group(backBtn, grid);
 		
-		scene = new Scene(group, 600, 465);
+		scene = new Scene(group, 670, 465);
 		MAIN.mainStage.setScene(scene);
 		MAIN.mainStage.setTitle("View Targets");	
 	             

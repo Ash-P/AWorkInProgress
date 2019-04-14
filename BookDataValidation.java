@@ -98,43 +98,6 @@ public class BookDataValidation {
 		return true;
 	}
 	
-	/*
-	//Validates fields for manually adding reading progress to new 'previously read' books
-	protected static Boolean validateProgressFieldsPast(int pages, int pagesOnDate, String pagesReadOnADate) {
-		if(pages < 1) {
-			dataInvalid("Invalid pages.\nMust be a positive integer.");
-			return false;
-		}
-		if(pagesOnDate < 1) {
-			dataInvalid("Invalid pages read on a date.\nMust be a positive integer.");
-			return false;
-		}
-		if(pagesOnDate + AddABook.getTotalPagesReadOnDates(pagesReadOnADate) > pages) {
-			dataInvalid("Invalid pages read on a date.\nTotal pages read on all dates cannot be greater than book pages.");
-			return false;
-		}
-		return true;
-	}
-	
-	//Validates fields for manually adding reading progress to new 'currently reading' books
-	protected static Boolean validateProgressFieldsCurrent(int pages, int pagesRead, int pagesOnDate, String pagesReadOnADate) {
-		if(pages < 1) {
-			dataInvalid("Invalid pages.\nMust be a positive integer.");
-			return false;
-		}
-		if(pagesRead < 1) {
-			dataInvalid("Invalid book pages read.\nMust be a positive integer.");
-			return false;
-		}
-		if(pagesOnDate < 1) {
-			dataInvalid("Invalid pages read on a date.\nMust be a positive integer.");
-			return false;
-		}
-		if(pagesOnDate + AddABook.getTotalPagesReadOnDates(pagesReadOnADate) > pagesRead) return false;
-		return true;
-	}
-	*/
-	
 	private static void dataInvalid(String content) {
 		MAIN.createAlert(AlertType.ERROR, "Error", "Validation unsuccessful", content);
 	}

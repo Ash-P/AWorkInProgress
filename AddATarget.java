@@ -30,8 +30,6 @@ import javafx.scene.text.FontWeight;
 /**
  * Includes UI elements and functionality for adding a target,
  * and functionality for updating targets and checking for target completion
- * 
- * @author Blelloch
  */
 public class AddATarget {
 
@@ -48,7 +46,7 @@ public class AddATarget {
 	private final Button backBtn = new Button("Back");
 	private Scene scene;
 	private Group group;
-	private boolean validData = true;
+	private boolean isValid;
 	
 	public AddATarget() {
 		createUI();
@@ -130,21 +128,63 @@ public class AddATarget {
 		submitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				isValid = true;	
 				int targetType = 0;
-				if(targetTypeBox.getValue().equals("Pages of a Specific Book")) targetType = 1;
-				else if(targetTypeBox.getValue().equals("Pages across all Books")) targetType = 2;
-				else if(targetTypeBox.getValue().equals("Books")) targetType = 3;
-				String deadlineDate = deadlineDatePicker.getValue().format(DATE_FORMATTER);
-				int bookID = MAIN.getBookID(bookTitleBox.getValue());
-				int targetValue = Integer.parseInt(targetValueTxt.getText());
-				if(validateFields(targetType, deadlineDate, bookID, targetValue)) {
-					storage.targetData target = addNewTarget(targetType, deadlineDate, bookID, targetValue);
-					if(createCalEventBox.getValue().equals("Yes")) {
-						System.out.println("Test");
-						CreateCSV.createCSV(target);
+				String deadlineDate = "";
+				int bookID = 0;
+				int targetValue = 0;
+				
+				if(targetTypeBox.getValue() != null) {
+					if(targetTypeBox.getValue().equals("Pages of a specific book")) targetType = 1;
+					else if(targetTypeBox.getValue().equals("Pages across all books")) targetType = 2;
+					else if(targetTypeBox.getValue().equals("Books")) targetType = 3;	
+				}
+				else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Target validation unsuccessful", "Target type not selected.\nIt must be specified for all targets.");
+					isValid = false;
+				}
+				if(targetType == 1) {
+					if(bookTitleBox.getValue() != null) {
+						bookID = MAIN.getBookID(bookTitleBox.getValue());
+					}
+					else {
+						MAIN.createAlert(AlertType.ERROR, "Error", "Target validation unsuccessful", "Book title not entered.\nIt must be specified for the selected target type.");
+						isValid = false;
 					}
 				}
-				clearFields();
+				
+				if (deadlineDatePicker.getValue() != null) {
+					deadlineDate = deadlineDatePicker.getValue().format(DATE_FORMATTER);
+				}
+				else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Target validation unsuccessful", "Deadline date not entered.\nIt must be specified for all targets.");
+					isValid = false;
+				}
+				
+				if(!targetValueTxt.getText().isEmpty()) {
+					targetValue = Integer.parseInt(targetValueTxt.getText());
+				}
+				else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Target validation unsuccessful", "Target value not entered.\nIt must be specified for all targets.");
+					isValid = false;
+				}
+				
+				if(isValid && validateFields(targetType, deadlineDate, bookID, targetValue)) {
+					storage.targetData target = addNewTarget(targetType, deadlineDate, bookID, targetValue);
+					
+					String content;
+			    	if(target.targetType == 1) content = "New target to read " + target.targetValue + " pages of the book " + MAIN.getBookTitle(target.bookID) + " by " + target.deadlineDate + ".";
+			    	else if(target.targetType == 2) content = "New target to read " + target.targetValue + " pages across all books by " + target.deadlineDate + ".";
+			    	else content = "New target to read " + target.targetValue + " books by " + target.deadlineDate + ".";
+					MAIN.createAlert(AlertType.INFORMATION, "Target Added", "New target added successfully", content);
+					
+					if(createCalEventBox.getValue() != null && createCalEventBox.getValue().equals("Yes")) {
+						CreateCSV.createCSV(target);
+						MAIN.createAlert(AlertType.INFORMATION, "Google Calendar Event", "Google Calendar Event successfully created", "A .csv file titled 'GoogleCalendarEvent' is in the directory.");
+					}
+					
+					clearBtn.fire();
+				}
 			}
 		});
 		submitBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
@@ -157,7 +197,11 @@ public class AddATarget {
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				clearFields();
+				targetTypeBox.valueProperty().set(null);
+				bookTitleBox.valueProperty().set(null);
+				deadlineDatePicker.valueProperty().set(null);
+				targetValueTxt.clear();
+				createCalEventBox.valueProperty().set(null);
 			}
 		});
 		clearBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
@@ -172,9 +216,7 @@ public class AddATarget {
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (!targetValueTxt.getText().matches("[0-9]+")) {
 					targetValueTxt.setStyle("-fx-text-inner-color: red;");
-					validData = false;
 				} else {
-					validData = true;
 					targetValueTxt.setStyle("-fx-text-inner-color: black;");
 				}
 			}
@@ -195,7 +237,14 @@ public class AddATarget {
 	
 	private static Boolean validateFields(int targetType, String deadlineDate, int bookID, int targetValue) {
 		if(targetType == 0) return false; //means an error has occurred
-		if(targetValue < 1) return false;
+		if(targetType == 1 && bookID == 0) {
+			MAIN.createAlert(AlertType.ERROR, "Error", "Target validation unsuccessful", "Book title invalid.\nIt must be specified for the selected target type.");
+			return false;
+		}
+		if(targetValue < 1) {
+			MAIN.createAlert(AlertType.ERROR, "Error", "Target validation unsuccessful", "Target value invalid.\nMust be a positive integer.");
+			return false;
+		}
 		if(targetType == 1) {
 			int pagesRemaining = -1;
 			for(storage.bookData b : alldata.bookStore) {
@@ -204,7 +253,11 @@ public class AddATarget {
 					break;
 				}
 			}
-			if(targetValue > pagesRemaining) return false;
+			if(targetValue > pagesRemaining) {
+				MAIN.createAlert(AlertType.ERROR, "Error", "Target validation unsuccessful", "Target value invalid.\nCannot be greater than pages remaining.\nPages remaining of the book " + MAIN.getBookTitle(bookID) + ": " + pagesRemaining + ".");
+				return false;
+			}
+				
 		}
 		return true;
 	}
@@ -228,14 +281,6 @@ public class AddATarget {
 			if(t.targetID > counter) counter = t.targetID;
 		}
 		return counter;
-	}
-
-	private void clearFields() {
-		targetTypeBox.valueProperty().set(null);
-		bookTitleBox.valueProperty().set(null);
-		deadlineDatePicker.valueProperty().set(null);
-		targetValueTxt.clear();
-		createCalEventBox.valueProperty().set(null);
 	}
 	
 	/**
@@ -300,13 +345,12 @@ public class AddATarget {
 	}
 	
 	/**
-	 * @param target : the target objects
+	 * @param target : the target object
 	 * @param completedOnTime : : 1=yes, 2=no, 3=unspecified
 	 */
 	public static void targetCompleted(storage.targetData target, int completedOnTime) {
 		String header;
     	String content;
-		
 		Alert dialog = new Alert(AlertType.INFORMATION);
 		dialog.setTitle("Target Completed");
 		

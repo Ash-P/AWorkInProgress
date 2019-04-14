@@ -144,6 +144,7 @@ public class AddATarget {
 						CreateCSV.createCSV(target);
 					}
 				}
+				clearFields();
 			}
 		});
 		submitBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
@@ -156,11 +157,7 @@ public class AddATarget {
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				targetTypeBox.valueProperty().set(null);
-				bookTitleBox.valueProperty().set(null);
-				deadlineDatePicker.valueProperty().set(null);
-				targetValueTxt.clear();
-				createCalEventBox.valueProperty().set(null);
+				clearFields();
 			}
 		});
 		clearBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
@@ -231,6 +228,14 @@ public class AddATarget {
 			if(t.targetID > counter) counter = t.targetID;
 		}
 		return counter;
+	}
+
+	private void clearFields() {
+		targetTypeBox.valueProperty().set(null);
+		bookTitleBox.valueProperty().set(null);
+		deadlineDatePicker.valueProperty().set(null);
+		targetValueTxt.clear();
+		createCalEventBox.valueProperty().set(null);
 	}
 	
 	/**

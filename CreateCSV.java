@@ -14,13 +14,13 @@ public class CreateCSV {
 	private static final DateFormat UK_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private static final DateFormat US_DATE_FORMAT = new SimpleDateFormat("MM-dd-yyyy");
 	
-	
 	public static void createCSV(storage.targetData targetObj) {
 		String description = "";
 		FileWriter fileWriter = null;
 		BufferedWriter bufferedWriter = null;
 		
 		if(targetObj.targetType == 1) {
+			System.out.println("Testing");
 			String bookTitle = MAIN.getBookTitle(targetObj.bookID);
 			storage.bookData bookObj = MAIN.getSpecificBook(bookTitle);
 			int targetValue = bookObj.pagesRead + targetObj.targetValue; //page to read to
@@ -50,6 +50,5 @@ public class CreateCSV {
 			System.out.println(e.getMessage());
 		}
 	}
-	
 
 }

@@ -1,4 +1,8 @@
+import java.util.Arrays;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,24 +12,20 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
-
-import java.util.Arrays;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class ViewBooks {
-	public Label title = new Label("View Book Data");
-	public Button back = new Button("Back");
-	public ComboBox<String> categoryComboBox = new ComboBox<>();
-	public ComboBox<String> items = new ComboBox<>();
-
-	public TableView<storage.bookData> bookTable = new TableView<>();
+	private static final Label title = new Label("View Book Data");
+	private static final Button backBtn = new Button("Back");
+	private static ComboBox<String> categoryComboBox = new ComboBox<>();
+	private static ComboBox<String> items = new ComboBox<>();
+	private static TableView<storage.bookData> bookTable = new TableView<>();
 
 	public ViewBooks() {
+		MAIN.mainStage.setTitle("View Books");
 		categoryComboBox.setPromptText("Category");
 		categoryComboBox.getItems().add("Status");
 		categoryComboBox.getItems().add("Author");
@@ -70,19 +70,12 @@ public class ViewBooks {
 		TableColumn<storage.bookData, String> bookDescription = new TableColumn<>("Book Description");
 
 		bookDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
-		// ObservableList<storage.bookData> x = new ObservableList<>();
-		// FXCollections.observableArrayList().add(e);
 
-		// TableView<storage.bookData> bookTable = new TableView<>();
 		bookTable.setItems(getBooks());
-		bookTable.getColumns().addAll( Arrays.asList(bookStatus, bookName, bookPages, bookPagesRead, bookDateAdded, bookDateStarted,
-				bookDateCompleted, bookAuthor, bookPublisher, bookPublishYear, bookGenre, bookDescription) );
+		bookTable.getColumns().addAll( Arrays.asList(bookStatus, bookName, bookPages, bookPagesRead, bookDateAdded, bookDateStarted, bookDateCompleted, bookAuthor, bookPublisher, bookPublishYear, bookGenre, bookDescription) );
 
-		// bookTable.getColumns().addAll(bookStatus);
-
-		back.setLayoutX(10);
-		back.setLayoutY(560);
-		
+		backBtn.setLayoutX(10);
+		backBtn.setLayoutY(568);	
 		
 		title.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
 		title.setLayoutX(440);
@@ -92,9 +85,10 @@ public class ViewBooks {
 		vbox.setSpacing(5);
 		vbox.setPadding(new Insets(90, 0, 0, 10));
 		vbox.getChildren().addAll(categoryComboBox, items, bookTable);
-		setupHandles();
-		Group root = new Group(back, vbox, title);
-		Scene scene = new Scene(root, 1037, 596);
+		
+		setupHandlers();
+		Group root = new Group(backBtn, vbox, title);
+		Scene scene = new Scene(root, 1030, 610);
 		MAIN.mainStage.setScene(scene);
 
 	}
@@ -104,7 +98,6 @@ public class ViewBooks {
 		for (storage.bookData item : alldata.bookStore) {
 			books.add(item);
 		}
-
 		return books;
 	}
 
@@ -115,7 +108,6 @@ public class ViewBooks {
 				books.add(item);
 			}
 		}
-
 		return books;
 	}
 
@@ -126,7 +118,6 @@ public class ViewBooks {
 				books.add(item);
 			}
 		}
-
 		return books;
 	}
 	
@@ -137,7 +128,6 @@ public class ViewBooks {
 				books.add(item);
 			}
 		}
-
 		return books;
 	}
 	
@@ -148,14 +138,12 @@ public class ViewBooks {
 				books.add(item);
 			}
 		}
-
 		return books;
 	}
 	
-	void setupHandles() {
+	void setupHandlers() {
 
 		categoryComboBox.setOnAction(e -> {
-
 			items.setValue(null);
 			items.getItems().clear();
 			bookTable.setItems(getBooks());
@@ -171,13 +159,10 @@ public class ViewBooks {
 			}
 			else if (categoryComboBox.getValue() == "Genre") {
 				for (storage.bookData book : alldata.bookStore) items.getItems().add(book.genre);
-			}
-			
-
+			}	
 		});
 
-		items.setOnAction(e->{
-			
+		items.setOnAction(e->{			
 			if (categoryComboBox.getValue() == "Author") {
 				bookTable.getItems().clear();
 				bookTable.setItems(getBooksByAuthor(items.getValue()));
@@ -195,15 +180,19 @@ public class ViewBooks {
 			else if(categoryComboBox.getValue() == "Genre") {
 				bookTable.getItems().clear();
 				bookTable.setItems(getBooksByGenre(items.getValue()));
-			}
-			
-			
-			
+			}			
 		});
 		
 		
-		back.setOnAction(e -> {
+		backBtn.setOnAction(e -> {
 			ManageBooksMenu.instantiate();
+			e.consume();
+		});
+		backBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				backBtn.fire();
+				ev.consume(); 
+			}
 		});
 
 	}

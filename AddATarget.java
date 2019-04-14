@@ -22,6 +22,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -36,7 +38,6 @@ public class AddATarget {
 	private final Label title = new Label("Add a Target");
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
 	private final ComboBox<String> targetTypeBox = new ComboBox<>();
 	private final ComboBox<String> bookTitleBox = new ComboBox<>();
 	private final DatePicker deadlineDatePicker = new DatePicker();
@@ -53,7 +54,7 @@ public class AddATarget {
 		createUI();
 		setupHandles();
 
-		scene = new Scene(group, 600, 250);
+		scene = new Scene(group, 435, 250);
 		MAIN.mainStage.setScene(scene);
 		MAIN.mainStage.setTitle("Add a Target");
 	}
@@ -93,7 +94,7 @@ public class AddATarget {
 		submitBtn.setLayoutX(300);
 		submitBtn.setLayoutY(170);
 
-		clearBtn.setLayoutX(360);
+		clearBtn.setLayoutX(370);
 		clearBtn.setLayoutY(170);
 		
 		title.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
@@ -139,13 +140,19 @@ public class AddATarget {
 				if(validateFields(targetType, deadlineDate, bookID, targetValue)) {
 					storage.targetData target = addNewTarget(targetType, deadlineDate, bookID, targetValue);
 					if(createCalEventBox.getValue().equals("Yes")) {
+						System.out.println("Test");
 						CreateCSV.createCSV(target);
 					}
 				}
 			}
 		});
+		submitBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				submitBtn.fire();
+				ev.consume(); 
+			}
+		});
 
-		//resets all fields
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -154,6 +161,12 @@ public class AddATarget {
 				deadlineDatePicker.valueProperty().set(null);
 				targetValueTxt.clear();
 				createCalEventBox.valueProperty().set(null);
+			}
+		});
+		clearBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				clearBtn.fire();
+				ev.consume(); 
 			}
 		});
 		
@@ -172,12 +185,19 @@ public class AddATarget {
 		
 		backBtn.setOnAction(e -> {
 			TargetsMenu.instantiate();
+			e.consume();
+		});
+		backBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				backBtn.fire();
+				ev.consume(); 
+			}
 		});
 
 	}
 	
 	private static Boolean validateFields(int targetType, String deadlineDate, int bookID, int targetValue) {
-		if(targetType == 0) return false; //means an error has occurred in converting from the String ComboBox to integer in SubmitBtn's ActionEvent (in setupHanles())
+		if(targetType == 0) return false; //means an error has occurred
 		if(targetValue < 1) return false;
 		if(targetType == 1) {
 			int pagesRemaining = -1;
@@ -279,18 +299,21 @@ public class AddATarget {
 	 * @param completedOnTime : : 1=yes, 2=no, 3=unspecified
 	 */
 	public static void targetCompleted(storage.targetData target, int completedOnTime) {
+		String header;
+    	String content;
+		
 		Alert dialog = new Alert(AlertType.INFORMATION);
 		dialog.setTitle("Target Completed");
 		
-		if(completedOnTime == 1) dialog.setHeaderText("A target has been completed on time");
-		else if(completedOnTime == 2) dialog.setHeaderText("A target has been completed after the deadline date");
-		else dialog.setHeaderText("A target has been completed");
+		if(completedOnTime == 1) header = "A target has been completed on time";
+		else if(completedOnTime == 2) header = "A target has been completed after the deadline date";
+		else header = "A target has been completed";
 		
-		if(target.targetType == 1) dialog.setContentText("Target completed: Read " + target.targetValue + " pages of the book " + MAIN.getBookTitle(target.bookID) + " by " + target.deadlineDate + ".");
-		else if(target.targetType == 2) dialog.setContentText("Target completed:\nRead " + target.targetValue + " pages across all books by " + target.deadlineDate + ".");
-		else if(target.targetType == 3) dialog.setContentText("Target completed:\nRead " + target.targetValue + " books by " + target.deadlineDate + ".");
+		if(target.targetType == 1) content = "Target completed: Read " + target.targetValue + " pages of the book " + MAIN.getBookTitle(target.bookID) + " by " + target.deadlineDate + ".";
+		else if(target.targetType == 2) content = "Target completed:\nRead " + target.targetValue + " pages across all books by " + target.deadlineDate + ".";
+		else content = "Target completed:\nRead " + target.targetValue + " books by " + target.deadlineDate + ".";
 		
-		dialog.showAndWait(); //the dialog must be confirmed before continuing
+		MAIN.createAlert(AlertType.INFORMATION, "Target Completed", header, content);
 	}
 	
 }

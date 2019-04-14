@@ -4,29 +4,30 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class ManageBooksMenu {
-	public static Label title = new Label("Manage Books");
-	public static Button addReadingProgress = new Button("Add Reading Progress");
-	public static Button addBook = new Button("Add a Book");
-	public static Button viewBooks = new Button("View Books");
-	public static Button save = new Button("Save");
-	public static Button back = new Button("Back");
+	public static final Label title = new Label("Manage Books");
+	public static final Button addReadingProgress = new Button("Add Reading Progress");
+	public static final Button addBook = new Button("Add a Book");
+	public static final Button viewBooks = new Button("View Books");
+	public static final Button saveBtn = new Button("Save");
+	public static final Button backBtn = new Button("Back");
 
 	Scene previousScene;
 
 	public static void instantiate() {
+		MAIN.mainStage.setTitle("Manage Books Menu");
 		title.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
 		title.setLayoutX(255);
 		title.setLayoutY(15);
 
-		back.setLayoutX(20);
-		back.setLayoutY(278);
+		backBtn.setLayoutX(20);
+		backBtn.setLayoutY(278);
 
-		save.setLayoutX(570);
-		save.setLayoutY(278);
-		
-		
+		saveBtn.setLayoutX(570);
+		saveBtn.setLayoutY(278);	
 		//
 		addReadingProgress.setStyle("-fx-font: 15px Tahoma;");
 		addBook.setStyle("-fx-font: 15px Tahoma;");
@@ -47,34 +48,68 @@ public class ManageBooksMenu {
 		viewBooks.setLayoutX(120);
 		viewBooks.setLayoutY(140);
 		
-		setupHandles();
+		setupHandlers();
 
-		Group root = new Group(addBook, addReadingProgress, viewBooks, back, save, title);
+		Group root = new Group(addBook, addReadingProgress, viewBooks, backBtn, saveBtn, title);
 		Scene mainScene = new Scene(root, 640, 320);
 		MAIN.mainStage.setScene(mainScene);
 
 	}
 
-	static void setupHandles() {
+	static void setupHandlers() {
 		
 		addBook.setOnAction(e -> {
 			AddABook addBookObj = new AddABook();
+			e.consume();
+		});
+		addBook.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				addBook.fire();
+				ev.consume(); 
+			}
 		});
 
 		addReadingProgress.setOnAction(e -> {
 			AddReadingProgress addReadProgObj = new AddReadingProgress();
+			e.consume();
+		});
+		addReadingProgress.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				addReadingProgress.fire();
+				ev.consume(); 
+			}
 		});
 		
 		viewBooks.setOnAction(e ->{
-			ViewBooks viewBooksObj = new ViewBooks();	
+			ViewBooks viewBooksObj = new ViewBooks();
+			e.consume();
+		});
+		viewBooks.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				viewBooks.fire();
+				ev.consume(); 
+			}
 		});
 		
-		back.setOnAction(e -> {
+		backBtn.setOnAction(e -> {
 			MAIN.instantiate();
+			e.consume();
+		});
+		backBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				backBtn.fire();
+				ev.consume(); 
+			}
 		});
 		
-		save.setOnAction(e -> {
+		saveBtn.setOnAction(e -> {
 			MAIN.saveData();
+		});
+		saveBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				saveBtn.fire();
+				ev.consume(); 
+			}
 		});
 	}
 }

@@ -1,13 +1,10 @@
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.time.format.DateTimeParseException;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 public class BookDataValidation {
-	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	
 	protected static boolean validBookDataString(String string) {
 		if(string.contains(";")) {
@@ -24,22 +21,51 @@ public class BookDataValidation {
 	
 	//Validates fields that apply for all new books
 	protected static Boolean validateFieldsBasic(String title, int pages, String author, String publisher, int publicationYear, String genre, String description) {
-		if(!validBookDataString(title)) return false;
-		if(!validBookDataInteger(String.valueOf(pages))) return false;
-		
-		if(author != null && !validBookDataString(author)) return false;
-		if(publisher != null && !validBookDataString(publisher)) return false;
-		if(genre != null && !validBookDataString(genre)) return false;
-		if(description != null && !validBookDataString(description)) return false;
-		if(publicationYear != -1 && !validBookDataInteger(String.valueOf(publicationYear))) return false;
-		
-		if(title.equals(null)) return false;
-		for(storage.bookData b : alldata.bookStore) {
-			if(b.title == title) return false;
+		if(!validBookDataString(title)) {
+			dataInvalid("Book title is invalid.\nIt must not contain the character ;");
+			return false;
 		}
-		if(pages < 1) return false;
+		if(!validBookDataInteger(String.valueOf(pages))) {
+			dataInvalid("Book pages is invalid.\nIt must be a positive integer.");
+			return false;
+		}
+		
+		if(author != null && !validBookDataString(author)) {
+			dataInvalid("Book author is invalid.\nIt must not contain the character ;");
+			return false;
+		}
+		if(publisher != null && !validBookDataString(publisher)) {
+			dataInvalid("Book publisher is invalid.\nIt must not contain the character ;");
+			return false;
+		}
+		if(genre != null && !validBookDataString(genre)) {
+			dataInvalid("Book genre is invalid.\nIt must not contain the character ;");
+			return false;
+		}
+		if(description != null && !validBookDataString(description)) {
+			dataInvalid("Book description is invalid.\nIt must not contain the character ;");
+			return false;
+		}
+		if(publicationYear != -1 && !validBookDataInteger(String.valueOf(publicationYear))) {
+			dataInvalid("Book publication year is invalid.\nIt must be a positive integer.");
+			return false;
+		}
+		
+		if(title.equals(null)) {
+			dataInvalid("Book title is invalid.\nIt must be specified.");
+			return false;
+		}
+		for(storage.bookData b : alldata.bookStore) {
+			if(b.title.equals(title)) {
+				dataInvalid("Book title already exists.\nThe title must be unique.");
+				return false;
+			}
+		}
 		try {
-			if(publicationYear != -1 && Year.now().compareTo(Year.parse(String.valueOf(publicationYear))) < 0) return false; //publicationYear cannot be a future year
+			if(publicationYear != -1 && Year.now().compareTo(Year.parse(String.valueOf(publicationYear))) < 0) {
+				dataInvalid("Book publication year is invalid.\nIt must be an integer from 1000 to the current year.");
+				return false; //publicationYear cannot be a future year
+			}
 		} catch (DateTimeParseException e) {
 			return false;
 		}
@@ -47,80 +73,70 @@ public class BookDataValidation {
 	}
 	
 	//Validates fields that apply for new 'previously read' books
-	protected static Boolean validateFieldsPrevious(int pages, String dateStarted, String dateCompleted, String pagesReadOnADate) {
-		/*
-		try {
-			if(SIMPLE_DATE_FORMAT.parse(dateStarted).compareTo(SIMPLE_DATE_FORMAT.parse(dateCompleted)) > 0) {
-				System.out.println("Date completed cannot be before date started.");
-				return false; //prevent dateStarted being after dateCompleted
-			}
-		} catch (ParseException e) {
-		}
-		*/
-		if(getTotalPagesReadOnDates(pagesReadOnADate) != pages) {
-			System.out.println("Manually entered pages read does not match the number of pages of the book.");
+	protected static Boolean validateFieldsPrevious(int pages, String pagesReadOnADate) {
+		if(AddABook.getTotalPagesReadOnDates(pagesReadOnADate) != pages) {
+			System.out.println("pagesReadOnADate: '" + pagesReadOnADate + "'"); //test
+			dataInvalid("Invalid dates pages were read.\nManually entered pages read does not match book pages.");
 			return false;
 		}
-		System.out.println("Previous fields successfully validated.");
+		System.out.println("Previous fields successfully validated."); //test
 		return true;
 	}
 	
 	//Validates fields that apply for new 'currently reading' books
 	protected static Boolean validateFieldsCurrent(int pages, int pagesRead, String pagesReadOnADate) {
 		if(pagesRead >= pages) {
-			System.out.println("Pages read cannnot be greater than pages.");
+			dataInvalid("Pages read invalid.\nCannot be greater than pages.");
 			return false;
 		}
-		if(getTotalPagesReadOnDates(pagesReadOnADate) != pagesRead) {
-			System.out.println("Manually entered pages read does not match the entered number of pages read.");
+		if(AddABook.getTotalPagesReadOnDates(pagesReadOnADate) != pagesRead) {
+			System.out.println("pagesReadOnADate: '" + pagesReadOnADate + "'"); //test
+			dataInvalid("Invalid dates pages were read.\nManually entered pages read does not match pages read.");
 			return false;
 		}
-		System.out.println("Current fields successfully validated.");
+		System.out.println("Current fields successfully validated."); //test
 		return true;
 	}
 	
+	/*
 	//Validates fields for manually adding reading progress to new 'previously read' books
-	protected static Boolean validateProgressFieldsPast(int pages, String dateStarted, String dateCompleted, String dateRead, int pagesOnDate, String pagesReadOnADate) {
-		if(pages < 1 || pagesOnDate < 1) return false;
-		/*
-		try {
-			if(SIMPLE_DATE_FORMAT.parse(dateStarted).compareTo(SIMPLE_DATE_FORMAT.parse(dateRead)) > 0) return false; //prevent dateStarted being after dateRead
-			if(SIMPLE_DATE_FORMAT.parse(dateRead).compareTo(SIMPLE_DATE_FORMAT.parse(dateCompleted)) > 0) return false; //prevent dateRead being after dateCompleted
-		} catch (ParseException e) {
+	protected static Boolean validateProgressFieldsPast(int pages, int pagesOnDate, String pagesReadOnADate) {
+		if(pages < 1) {
+			dataInvalid("Invalid pages.\nMust be a positive integer.");
+			return false;
 		}
-		*/
-		if(pagesOnDate + getTotalPagesReadOnDates(pagesReadOnADate) > pages) return false;
+		if(pagesOnDate < 1) {
+			dataInvalid("Invalid pages read on a date.\nMust be a positive integer.");
+			return false;
+		}
+		if(pagesOnDate + AddABook.getTotalPagesReadOnDates(pagesReadOnADate) > pages) {
+			dataInvalid("Invalid pages read on a date.\nTotal pages read on all dates cannot be greater than book pages.");
+			return false;
+		}
 		return true;
 	}
 	
 	//Validates fields for manually adding reading progress to new 'currently reading' books
-	protected static Boolean validateProgressFieldsCurrent(int pages, String dateStarted, int pagesRead, String dateRead, int pagesOnDate, String pagesReadOnADate) {
-		if(pages < 1 || pagesRead < 1 || pagesOnDate < 1) return false;
-		/*
-		try {
-			if(DATE_FORMAT.parse(dateStarted).compareTo(DATE_FORMAT.parse(dateRead)) > 0) return false; //prevent dateStarted being after dateRead
-		} catch (ParseException e) {
+	protected static Boolean validateProgressFieldsCurrent(int pages, int pagesRead, int pagesOnDate, String pagesReadOnADate) {
+		if(pages < 1) {
+			dataInvalid("Invalid pages.\nMust be a positive integer.");
+			return false;
 		}
-		*/
-		if(pagesOnDate + getTotalPagesReadOnDates(pagesReadOnADate) > pagesRead) return false;
+		if(pagesRead < 1) {
+			dataInvalid("Invalid book pages read.\nMust be a positive integer.");
+			return false;
+		}
+		if(pagesOnDate < 1) {
+			dataInvalid("Invalid pages read on a date.\nMust be a positive integer.");
+			return false;
+		}
+		if(pagesOnDate + AddABook.getTotalPagesReadOnDates(pagesReadOnADate) > pagesRead) return false;
 		return true;
 	}
+	*/
 	
-	//Returns the sum of the int parts of pagesReadOnADate
-	private static int getTotalPagesReadOnDates(String pagesReadOnADate) {
-		int counter = 0;
-		if(!pagesReadOnADate.equals("")) {
-			String pagesReadOnADateObjs[] = pagesReadOnADate.split(" ");
-			for(String s : pagesReadOnADateObjs) {
-				String dateValuePairObj[] = s.split(",");
-				try {
-					counter += Integer.parseInt(dateValuePairObj[1]);
-				} catch (ArrayIndexOutOfBoundsException e) {
-					return -1;
-				}
-			}
-		}
-		return counter;
+	private static void dataInvalid(String content) {
+		MAIN.createAlert(AlertType.ERROR, "Error", "Validation unsuccessful", content);
 	}
 	
 }

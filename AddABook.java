@@ -14,7 +14,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -23,13 +22,14 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 // Move author genre to additional info, publisher, store all additional info under Description, 
 public class AddABook {
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-	private boolean validData = true;
 
 	// ESSENTIAL
 	private final ComboBox<String> statusBox = new ComboBox<>();
@@ -57,8 +57,10 @@ public class AddABook {
 	
 	private Group primaryGroup = new Group();
 	private Scene primaryScene;
-
-	StringBuilder pagesOnDateToStore = new StringBuilder();
+	
+	private Boolean isValid;
+	private String pagesReadOnADate = "";
+	private StringBuilder pagesOnDateToStore = new StringBuilder();
 	// manually specified pagesReadOnADate entries are stored here when the addBtn is
 	// pressed
 
@@ -140,14 +142,6 @@ public class AddABook {
 
 		dateReadPicker.setPromptText("Date Read");
 		dateReadPicker.setEditable(false); // forces a date to be selected from the calendar (prevents future dates being entered manually)
-		/*
-		dateReadPicker.setDayCellFactory(picker -> new DateCell() { // disable future dates
-			public void updateItem(LocalDate date, boolean empty) {
-				super.updateItem(date, empty);
-				setDisable(empty || date.compareTo(LocalDate.now()) > 0);
-			}
-		});
-		*/
 		dateReadPicker.setDisable(true);
 		GridPane.setConstraints(dateReadPicker, 0, 8);
 
@@ -180,11 +174,9 @@ public class AddABook {
 		bookDescriptionTxt.setPrefRowCount(3);
 		bookDescriptionTxt.setPrefColumnCount(16);
 
-		//submitBtn.setText("Submit");
 		submitBtn.setLayoutX(380);
 		submitBtn.setLayoutY(330);
 
-		//clearBtn.setText("Clear");
 		clearBtn.setLayoutX(450);
 		clearBtn.setLayoutY(330);
 
@@ -275,15 +267,13 @@ public class AddABook {
 		alldata.bookStore.add(newBook);
 	}
 
-	// Setup all action handlers
 	private void setupHandlers() {
 		
 		statusBox.setOnAction(e -> {
 			if(statusBox.getValue() == "Read Previously") {
 				dateStartedPicker.setDisable(false);
 				dateCompletedPicker.setDisable(false);
-				pagesReadTxt.setDisable(true);
-				
+				pagesReadTxt.setDisable(true);				
 				if(previouslyReadBox.getValue() == "Specify manually") {
 					pagesOnDateTxt.setDisable(false);
 					dateReadPicker.setDisable(false);
@@ -294,13 +284,12 @@ public class AddABook {
 					dateReadPicker.setDisable(true);
 					addBtn.setDisable(true);
 				}
-				
 				pagesReadTxt.clear();
-			} else if(statusBox.getValue() == "Currently Reading") {
+			}
+			else if(statusBox.getValue() == "Currently Reading") {
 				dateStartedPicker.setDisable(false);
 				dateCompletedPicker.setDisable(true);
-				pagesReadTxt.setDisable(false);
-				
+				pagesReadTxt.setDisable(false);				
 				if(previouslyReadBox.getValue() == "Specify manually") {
 					pagesOnDateTxt.setDisable(false);
 					dateReadPicker.setDisable(false);
@@ -311,10 +300,9 @@ public class AddABook {
 					dateReadPicker.setDisable(true);
 					addBtn.setDisable(true);
 				}
-
 				dateCompletedPicker.valueProperty().set(null);
-
-			} else if(statusBox.getValue() == "Want to Read") {
+			}
+			else if(statusBox.getValue() == "Want to Read") {
 				dateStartedPicker.setDisable(true);
 				dateCompletedPicker.setDisable(true);
 				pagesReadTxt.setDisable(true);
@@ -362,16 +350,16 @@ public class AddABook {
 				addBtn.setDisable(true);
 			}
 		});
-		
 		dateStartedPicker.setOnAction(e -> {
-				if(dateCompletedPicker.getValue() == null) {
-					dateCompletedPicker.setDayCellFactory(picker -> new DateCell() { // disable dates before dateStarted
-						public void updateItem(LocalDate date, boolean empty) {
-							super.updateItem(date, empty);
-							setDisable(empty || date.compareTo(dateStartedPicker.getValue()) < 0 || date.compareTo(LocalDate.now()) > 0);
-						}
-					});
-				} else previouslyReadBox.setDisable(false);
+			if(dateCompletedPicker.getValue() == null) {
+				dateCompletedPicker.setDayCellFactory(picker -> new DateCell() { // disable dates before dateStarted
+					public void updateItem(LocalDate date, boolean empty) {
+						super.updateItem(date, empty);
+						setDisable(empty || date.compareTo(dateStartedPicker.getValue()) < 0 || date.compareTo(LocalDate.now()) > 0);
+					}
+				});
+			} else previouslyReadBox.setDisable(false);
+			if(statusBox.getValue() == "Currently Reading") previouslyReadBox.setDisable(false);
 		});
 		
 		dateCompletedPicker.setOnAction(e -> {
@@ -385,140 +373,146 @@ public class AddABook {
 			} else previouslyReadBox.setDisable(false);
 		});
 		
-		submitBtn.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent arg0) {
-				Boolean isValid = true;
-				// ESSENTIAL FIELDS FOR ALL BOOKS
-				String title = "";
-				int pages = -1;
-				// OPTIONAL FIELDS FOR ALL BOOKS
-				String author = "";
-				String publisher = "";
-				int publicationYear = -1;
-				String genre = "";
-				String description = "";
-				
-				// GET VALUES OF THE FIELDS THAT APPLY TO ALL BOOKS
-				if (!bookTitleTxt.getText().isEmpty())
-					title = bookTitleTxt.getText();
-				else
-					isValid = false;
-
-				if (!bookPagesTxt.getText().isEmpty()) {
-					try {
-						pages = Integer.parseInt(bookPagesTxt.getText());
-					} catch (NumberFormatException e) {
-						isValid = false;
-					}
-				} else
-					isValid = false;
-
-				if (!bookAuthorTxt.getText().isEmpty())
-					author = bookAuthorTxt.getText();
-				if (!bookPublisherTxt.getText().isEmpty())
-					publisher = bookPublisherTxt.getText();
-				if (!bookGenreTxt.getText().isEmpty())
-					genre = bookGenreTxt.getText();
-				if (!bookDescriptionTxt.getText().isEmpty())
-					description = bookDescriptionTxt.getText();
-				if (!bookPublicationYearTxt.getText().isEmpty()) {
-					try {
-						publicationYear = Integer.parseInt(bookPublicationYearTxt.getText());
-					} catch (NumberFormatException e) {
-						isValid = false;
-					}
-				}
-
-				if (statusBox.getValue() == "Read Previously") {
-					// ADDITIONAL ESSENTIAL FIELDS FOR STATUS 0
-					String dateStarted = "";
-					String dateCompleted = "";
-					String pagesReadOnADate = "";
-
-					// GET VALUES OF THE ADDITIONAL ESSENTIAL FIELDS FOR BOOKS OF STATUS 0
-					if (!(dateStartedPicker.getValue() == null))
-						dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);
-					else isValid = false;
-
-					if (!(dateCompletedPicker.getValue() == null))
-						dateCompleted = dateCompletedPicker.getValue().format(DATE_FORMATTER);
-					else isValid = false;
-
-					if (isValid && previouslyReadBox.getValue().equals("Distribute evenly")) {
-						try {
-							pagesReadOnADate = distributeEvenly(pages, LocalDate.parse(dateStarted, DATE_FORMATTER), LocalDate.parse(dateCompleted, DATE_FORMATTER));
-						} catch (NullPointerException e) {
-							System.out.println("Null exception");
-						}
-					}
-
-					else if (previouslyReadBox.getValue().equals("Specify manually")) {
-						if (!pagesOnDateToStore.toString().isEmpty()) pagesReadOnADate = pagesOnDateToStore.toString();
-						else isValid = false;
-					} else isValid = false;
-					
-					if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description) && BookDataValidation.validateFieldsPrevious(pages, dateStarted, dateCompleted, pagesReadOnADate)) {
-						addNewPreviousBook(title, pages, dateStarted, dateCompleted, pagesReadOnADate, author, publisher, publicationYear, genre, description);
-						AchievementGUI.updateTargets();
-						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
-						clearFields(false);
-					} else createAlert(AlertType.ERROR, "Validation Unsuccessful", "Validation Unsuccessful", "The book has not been successfully validated.");
-				}
-
-				else if (statusBox.getValue() == "Currently Reading") {
-					// ADDITIONAL ESSENTIAL FIELDS FOR STATUS 1
-					String dateStarted = "";
-					int pagesRead = -1;
-					String pagesReadOnADate = "";
-
-					// GET VALUES OF THE ADDITIONAL ESSENTIAL FIELDS FOR BOOKS OF STATUS 1
-					if (!(dateStartedPicker.getValue() == null))
-						dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);
-					else isValid = false;
-
-					if (!pagesReadTxt.getText().isEmpty()) {
-						try {
-							pagesRead = Integer.parseInt(pagesReadTxt.getText());
-						} catch (NumberFormatException e) {
-							isValid = false;
-						}
-					} else isValid = false;
-
-					if (isValid && previouslyReadBox.getValue().equals("Distribute evenly")) {
-						pagesReadOnADate = distributeEvenly(pagesRead, LocalDate.parse(dateStarted, DATE_FORMATTER),
-								LocalDate.now());
-					} else if (previouslyReadBox.getValue().equals("Specify manually")) {
-						if (!pagesOnDateToStore.toString().isEmpty())
-							pagesReadOnADate = pagesOnDateToStore.toString();
-						else
-							isValid = false;
-					} else isValid = false;
-
-					if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description) && BookDataValidation.validateFieldsCurrent(pages, pagesRead, pagesReadOnADate)) {
-						addNewCurrentBook(title, pages, dateStarted, pagesRead, pagesReadOnADate, author, publisher, publicationYear, genre, description);
-						AchievementGUI.updateTargets();
-						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
-						clearFields(false);
-					} else
-						createAlert(AlertType.ERROR, "Validation Unsuccessful", "Validation Unsuccessful", "The book has not been successfully validated.");
-				}
-
-				else if (statusBox.getValue() == "Want to Read") {
-					// NO ADDITIONAL FIELDS APPLY TO BOOKS OF STATUS 2
-					if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description)) {
-						addNewFutureBook(title, pages, author, publisher, publicationYear, genre, description);
-						AchievementGUI.updateTargets();
-						createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
-						clearFields(false);
-					} else
-						createAlert(AlertType.ERROR, "Validation Unsuccessful", "Validation Unsuccessful", "The book has not been successfully validated.");
-				}
+		submitBtn.setOnAction(e -> {
+			isValid = true;
+			// ESSENTIAL FIELDS FOR ALL BOOKS
+			String title = "";
+			int pages = -1;
+			// OPTIONAL FIELDS FOR ALL BOOKS
+			String author = "";
+			String publisher = "";
+			int publicationYear = -1;
+			String genre = "";
+			String description = "";
 			
+			// GET VALUES OF THE FIELDS THAT APPLY TO ALL BOOKS
+			if(statusBox.getValue() == null) {
+				MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Book status not selected.\nIt must be selected to add a book.");
+				isValid = false;
 			}
-		
+			
+			if (!bookTitleTxt.getText().isEmpty())
+				title = bookTitleTxt.getText();
+			else {
+				MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Book title not entered.\nIt must be specified for all books.");
+				isValid = false;
+			}
 
+			if (!bookPagesTxt.getText().isEmpty()) {
+				try {
+					pages = Integer.parseInt(bookPagesTxt.getText());
+				} catch (NumberFormatException ex) {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Book pages invalid.\nIt must be an integer number");
+					isValid = false;
+				}
+			} else {
+				MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Book pages not entered.\nIt must be specified for all books.");
+				isValid = false;
+			}
+				
+			if (!bookAuthorTxt.getText().isEmpty())
+				author = bookAuthorTxt.getText();
+			if (!bookPublisherTxt.getText().isEmpty())
+				publisher = bookPublisherTxt.getText();
+			if (!bookGenreTxt.getText().isEmpty())
+				genre = bookGenreTxt.getText();
+			if (!bookDescriptionTxt.getText().isEmpty())
+				description = bookDescriptionTxt.getText();
+			if (!bookPublicationYearTxt.getText().isEmpty()) {
+				try {
+					publicationYear = Integer.parseInt(bookPublicationYearTxt.getText());
+				} catch (NumberFormatException ex) {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Book publication year is invalid.\nIt must be an integer number.");
+					isValid = false;
+				}
+			}
+			
+			if (statusBox.getValue() == "Read Previously") {
+				// ADDITIONAL ESSENTIAL FIELDS FOR STATUS 0
+				String dateStarted = "";
+				String dateCompleted = "";
+
+				// GET VALUES OF THE ADDITIONAL ESSENTIAL FIELDS FOR BOOKS OF STATUS 0
+				if (!(dateStartedPicker.getValue() == null))
+					dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);
+				else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Date started not entered.\nIt must be specified for 'Read Previously' books.");
+					isValid = false;
+				}
+
+				if (!(dateCompletedPicker.getValue() == null))
+					dateCompleted = dateCompletedPicker.getValue().format(DATE_FORMATTER);
+				else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Date completed not entered.\nIt must be specified for 'Read Previously' books.");
+					isValid = false;
+				}
+
+				if ( !previouslyReadBox.isDisabled() && (!previouslyReadBox.getValue().equals("Distribute evenly") && !previouslyReadBox.getValue().equals("Specify manually")) ) {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "'Previously Read Fields' selection not made.\nThis must be specified.");
+					isValid = false;
+				}
+				
+				if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description) && BookDataValidation.validateFieldsPrevious(pages, pagesReadOnADate)) {
+					addNewPreviousBook(title, pages, dateStarted, dateCompleted, pagesReadOnADate, author, publisher, publicationYear, genre, description);
+					MAIN.createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
+					ViewAchievements.updateTargets();
+					clearFields(false);
+				}
+			}
+
+			else if (statusBox.getValue() == "Currently Reading") {
+				// ADDITIONAL ESSENTIAL FIELDS FOR STATUS 1
+				String dateStarted = "";
+				int pagesRead = -1;
+
+				// GET VALUES OF THE ADDITIONAL ESSENTIAL FIELDS FOR BOOKS OF STATUS 1
+				if (!(dateStartedPicker.getValue() == null))
+					dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);
+				else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Date started not entered.\nIt must be specified for 'Currently Reading' books.");
+					isValid = false;
+				}
+
+				if (!pagesReadTxt.getText().isEmpty()) {
+					try {
+						pagesRead = Integer.parseInt(pagesReadTxt.getText());
+					} catch (NumberFormatException ex) {
+						MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Pages read invalid.\nIt must be an integer number");
+						isValid = false;
+					}
+				} else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "Pages read not entered.\nIt must be specified for 'Currently Reading' books.");
+					isValid = false;
+				}
+
+				if ( !previouslyReadBox.isDisabled() && (!previouslyReadBox.getValue().equals("Distribute evenly") && !previouslyReadBox.getValue().equals("Specify manually")) ) {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Book validation unsuccessful", "'Previously Read Fields' selection not made.\nThis must be specified.");
+					isValid = false;
+				}
+
+				if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description) && BookDataValidation.validateFieldsCurrent(pages, pagesRead, pagesReadOnADate)) {
+					addNewCurrentBook(title, pages, dateStarted, pagesRead, pagesReadOnADate, author, publisher, publicationYear, genre, description);
+					MAIN.createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
+					ViewAchievements.updateTargets();
+					clearFields(false);
+				}
+			}
+
+			else if (statusBox.getValue() == "Want to Read") {
+				// NO ADDITIONAL FIELDS APPLY TO BOOKS OF STATUS 2
+				if (isValid && BookDataValidation.validateFieldsBasic(title, pages, author, publisher, publicationYear, genre, description)) {
+					addNewFutureBook(title, pages, author, publisher, publicationYear, genre, description);
+					MAIN.createAlert(AlertType.INFORMATION, "Validation Successful", "A new book has been created", "The book " + title + " has been successfully added to the system.");
+					ViewAchievements.updateTargets();
+					clearFields(false);	
+				}
+			}
+		});
+		submitBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				submitBtn.fire();
+				ev.consume(); 
+			}
 		});
 
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -527,117 +521,139 @@ public class AddABook {
 				clearFields(false);
 			}
 		});
+		clearBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				clearBtn.fire();
+				ev.consume(); 
+			}
+		});
 		
 		backBtn.setOnAction(e -> {
 			ManageBooksMenu.instantiate();
+			e.consume();
+		});
+		backBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				backBtn.fire();
+				ev.consume(); 
+			}
 		});
 
 		addBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				Boolean isValid = true;
-				int status = -1;
-				String title = null;
+				isValid = true;
 				int pages = -1;
-				String dateRead = null;
+				String dateRead = "";
 				int pagesOnDate = -1;
 
 				if (!bookPagesTxt.getText().isEmpty()) {
 					try {
 						pages = Integer.parseInt(bookPagesTxt.getText());
 					} catch (NumberFormatException e) {
+						MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Book pages invalid.\nMust be a positive integer.");
 						isValid = false;
 					}
-				} else
+				} else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Book pages not entered.\nMust be specified for adding reading history to 'Previously Read' and 'Currently Reading' books.");
 					isValid = false;
+				}
 
 				if (!(dateReadPicker.getValue() == null))
 					dateRead = dateReadPicker.getValue().format(DATE_FORMATTER).toString();
-				else
+				else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Date started not entered.\nIt must be specified for 'Previously Read' and 'Currently Reading' books.");
 					isValid = false;
-
+				}
+					
 				if (!pagesOnDateTxt.getText().isEmpty()) {
 					try {
 						pagesOnDate = Integer.parseInt(pagesOnDateTxt.getText());
 					} catch (NumberFormatException e) {
+						MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Pages read on date invalid.\nMust be a positive integer.");
 						isValid = false;
 					}
-				} else
+				} else {
+					MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Pages read on date not enterd.\nMust be specified for adding reading progress to 'Previously Read' and 'Currently Reading' books.");
 					isValid = false;
+				}
 
 				if (statusBox.getValue() == "Read Previously") {
-					String dateStarted = "";
-					String dateCompleted = "";
-					String pagesReadOnADate = "";
-
-					// GET VALUES OF THE ADDITIONAL ESSENTIAL FIELDS FOR BOOKS OF STATUS 0
-					if (!(dateStartedPicker.getValue() == null)) dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);
-					else isValid = false;
-
-					if (!(dateCompletedPicker.getValue() == null)) dateCompleted = dateCompletedPicker.getValue().format(DATE_FORMATTER);
-					else isValid = false;
-
-					if (isValid && previouslyReadBox.getValue().equals("Distribute evenly")) 
-						pagesReadOnADate = distributeEvenly(pages, LocalDate.parse(dateStarted, DATE_FORMATTER), LocalDate.parse(dateCompleted, DATE_FORMATTER));
-					else if (!previouslyReadBox.getValue().equals("Specify manually")) isValid = false;
-
-					if (isValid && BookDataValidation.validateProgressFieldsPast(pages, dateStarted, dateCompleted, dateRead, pagesOnDate, pagesReadOnADate)) {
-						pagesOnDateToStore.append(dateRead + "," + pagesOnDate + " ");
-						createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Added " + pagesOnDate + " pages on " + dateRead + " to the system.");
-						System.out.println(dateRead + "," + pagesOnDate + " "); // Test
-					} else
-						createAlert(AlertType.ERROR, "Validation Unsuccessful", "Validation Unsuccessful", "Reading progress has not been successfully validated.");
+					// ADDITIONAL ESSENTIAL FIELDS FOR STATUS 0
+					String dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);
+					String dateCompleted = dateCompletedPicker.getValue().format(DATE_FORMATTER);
+					
+					if(isValid) {
+						if (previouslyReadBox.getValue().equals("Distribute evenly")) {
+							pagesReadOnADate = distributeEvenly(pages, LocalDate.parse(dateStarted, DATE_FORMATTER), LocalDate.parse(dateCompleted, DATE_FORMATTER));
+							MAIN.createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Distributed " + pages + " pages over all days from " + dateStarted + " to " + dateCompleted);
+						}
+						if (previouslyReadBox.getValue().equals("Specify manually")) {
+							pagesOnDateToStore.append(dateRead + "," + pagesOnDate + " ");
+							pagesReadOnADate = pagesOnDateToStore.toString();	
+							MAIN.createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Added " + pagesOnDate + " pages on " + dateRead + " to the system.\n" + (pages - getTotalPagesReadOnDates(pagesReadOnADate)) + " pages remaining."); 
+							System.out.println(pagesReadOnADate); // Test
+							clearFields(true);
+						}
+						else MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Previously read dates option not selected.\nMust select either 'Specify Manually' or 'Distribute Evenly'.");
+					}
+					else MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Previously read dates option not selected.\nMust select either 'Specify Manually' or 'Distribute Evenly'.");
 				}
 
 				else if (statusBox.getValue() == "Currently Reading") {
 					// ADDITIONAL ESSENTIAL FIELDS FOR STATUS 1
-					String dateStarted = null;
+					String dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);;
 					int pagesRead = -1;
-					String pagesReadOnADate = null;
-
-					// GET VALUES OF THE ADDITIONAL ESSENTIAL FIELDS FOR BOOKS OF STATUS 1
-					if (!(dateStartedPicker.getValue() == null))
-						dateStarted = dateStartedPicker.getValue().format(DATE_FORMATTER);
-					else
-						isValid = false;
 
 					if (!pagesReadTxt.getText().isEmpty()) {
 						try {
 							pagesRead = Integer.parseInt(pagesReadTxt.getText());
 						} catch (NumberFormatException e) {
+							MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Pages read invalid.\nMust be a positive integer.");
 							isValid = false;
 						}
-					} else
+					} else {
+						MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Pages read not enterd.\nMust be specified for adding reading progress to 'Currently Reading' books.");
 						isValid = false;
-
-					if (isValid && previouslyReadBox.getValue().equals("Distribute evenly")) {
-						pagesReadOnADate = distributeEvenly(pagesRead, LocalDate.parse(dateStarted, DATE_FORMATTER),
-								LocalDate.now());
-					} else if (previouslyReadBox.getValue().equals("Specify manually")) {
-						if (!pagesOnDateToStore.toString().isEmpty())
-							pagesReadOnADate = pagesOnDateToStore.toString();
-						else isValid = false;
-					} else isValid = false;
-
-					if (isValid && BookDataValidation.validateProgressFieldsCurrent(pages, dateStarted, pagesRead, dateRead, pagesOnDate, pagesReadOnADate)) {
-						pagesOnDateToStore.append(dateRead + "," + pagesOnDate + " ");
-						createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Added " + pagesOnDate + " pages on " + dateRead + " to the system.");
-						System.out.println(dateRead + "," + pagesOnDate + " "); // Test
-					} else
-						createAlert(AlertType.ERROR, "Validation Unsuccessful", "Validation Unsuccessful", "Reading progress has not been successfully validated.");
+					}
+					
+					if(isValid) {
+						if (previouslyReadBox.getValue().equals("Distribute evenly")) {
+							pagesReadOnADate = distributeEvenly(pagesRead, LocalDate.parse(dateStarted, DATE_FORMATTER), LocalDate.now());
+							MAIN.createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Distributed " + pagesRead + " pages over all days from " + dateStarted + " to " + LocalDate.now().format(DATE_FORMATTER));
+						}
+						if (previouslyReadBox.getValue().equals("Specify manually")) {
+							pagesOnDateToStore.append(dateRead + "," + pagesOnDate + " ");
+							pagesReadOnADate = pagesOnDateToStore.toString();	
+							MAIN.createAlert(AlertType.INFORMATION, "Validation Successful","New reading progress has been addded","Added " + pagesOnDate + " pages on " + dateRead + " to the system.");
+							System.out.println(pagesReadOnADate); // Test
+							clearFields(true);
+						}
+						else MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Previously read dates option not selected.\nMust select either 'Specify Manually' or 'Distribute Evenly'.");
+					}
+					else MAIN.createAlert(AlertType.ERROR, "Error", "Reading history validation unsuccessful", "Previously read dates option not selected.\nMust select either 'Specify Manually' or 'Distribute Evenly'.");
 				}
 			}
 		});
-
-		additionalBookInfoBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				if (additionalBookInfoBtn.getText() == "View Optional Fields")
-					additionalBookInfoBtn.setText("Hide Optional Fields");
-				else
-					additionalBookInfoBtn.setText("View Optional Fields");
-				changeVisibility(bookDescriptionTxt, bookGenreTxt, bookAuthorTxt, bookPublicationYearTxt,
-						bookPublisherTxt);
+		addBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				addBtn.fire();
+				ev.consume(); 
+			}
+		});
+		
+		additionalBookInfoBtn.setOnAction(e -> {
+			if (additionalBookInfoBtn.getText() == "View Optional Fields")
+				additionalBookInfoBtn.setText("Hide Optional Fields");
+			else {
+				additionalBookInfoBtn.setText("View Optional Fields");
+				changeVisibility(bookDescriptionTxt, bookGenreTxt, bookAuthorTxt, bookPublicationYearTxt, bookPublisherTxt);
+			}
+		});
+		additionalBookInfoBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				additionalBookInfoBtn.fire();
+				ev.consume(); 
 			}
 		});
 
@@ -645,10 +661,8 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataString(bookTitleTxt.getText())) {
-					validData = true;
 					bookTitleTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					bookTitleTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
@@ -658,10 +672,8 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataString(bookAuthorTxt.getText())) {
-					validData = true;
 					bookAuthorTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					bookAuthorTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
@@ -671,10 +683,8 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataString(bookPublisherTxt.getText())) {
-					validData = true;
 					bookPublisherTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					bookPublisherTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
@@ -684,10 +694,8 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataString(bookGenreTxt.getText())) {
-					validData = true;
 					bookGenreTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					bookGenreTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
@@ -697,10 +705,8 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataString(bookDescriptionTxt.getText())) {
-					validData = true;
 					bookDescriptionTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					bookDescriptionTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
@@ -710,10 +716,8 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataInteger(bookPagesTxt.getText())) {
-					validData = true;
 					bookPagesTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					bookPagesTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
@@ -723,10 +727,8 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataInteger(pagesReadTxt.getText())) {
-					validData = true;
 					pagesReadTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					pagesReadTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
@@ -736,10 +738,8 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataInteger(pagesOnDateTxt.getText())) {
-					validData = true;
 					pagesOnDateTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					pagesOnDateTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
@@ -749,17 +749,15 @@ public class AddABook {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
 				if (BookDataValidation.validBookDataInteger(bookPublicationYearTxt.getText())) {
-					validData = true;
 					bookPublicationYearTxt.setStyle("-fx-text-inner-color: black;");
 				} else {
-					validData = false;
 					bookPublicationYearTxt.setStyle("-fx-text-inner-color: red;");
 				}
 			}
 		});
 	}
 
-	private void clearFields(Boolean readProgOnly) {
+	private void clearFields(Boolean readProgOnly) {	
 		if(readProgOnly) {
 			dateReadPicker.valueProperty().set(null);
 			pagesOnDateTxt.clear();
@@ -779,6 +777,7 @@ public class AddABook {
 			bookGenreTxt.clear();
 			bookDescriptionTxt.clear();
 	
+			pagesReadOnADate = "";
 			pagesOnDateToStore = new StringBuilder();
 	
 			dateStartedPicker.setDisable(true);
@@ -805,25 +804,28 @@ public class AddABook {
 		}
 	}
 
-	/**
-	 * @param type : AlertType
-	 * @param title : String
-	 * @param header : String
-	 * @param content : String
-	 */
-	private static void createAlert(AlertType type, String title, String header, String content) {
-		Alert dialog = new Alert(type);
-		dialog.setTitle(title);
-		dialog.setHeaderText(header);
-		dialog.setContentText(content);
-		dialog.showAndWait(); // the dialog must be confirmed before continuing
-	}
-
 	public static int getHighestBookID() {
 		int counter = 0;
 		for (storage.bookData b : alldata.bookStore) {
 			if (b.bookID > counter)
 				counter = b.bookID;
+		}
+		return counter;
+	}
+	
+	//Returns the sum of the int parts of pagesReadOnADate
+	public static int getTotalPagesReadOnDates(String pagesReadOnADate) {
+		int counter = 0;
+		if(!pagesReadOnADate.equals("")) {
+			String pagesReadOnADateObjs[] = pagesReadOnADate.split(" ");
+			for(String s : pagesReadOnADateObjs) {
+				String dateValuePairObj[] = s.split(",");
+				try {
+					counter += Integer.parseInt(dateValuePairObj[1]);
+				} catch (ArrayIndexOutOfBoundsException e) {
+					return -1;
+				}
+			}
 		}
 		return counter;
 	}

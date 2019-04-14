@@ -11,55 +11,35 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
-import javafx.util.StringConverter;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.converter.IntegerStringConverter;
-import javafx.util.converter.NumberStringConverter;;
 
 public class ViewTargets {
 
-	private final TableView<storage.targetData> table = new TableView<storage.targetData>();
+	private static final Button backBtn = new Button("Back");
+	private static TableView<storage.targetData> table = new TableView<storage.targetData>();
+	private static TableColumn<storage.targetData, Integer> targetValueCol = new TableColumn<>();
 	private Scene scene;
 	private Group group;
-	public static Button back = new Button("Back");
-	TableColumn<storage.targetData, Integer> targetValueCol = new TableColumn<>();
+	
 	public ViewTargets() {
 		createUI();
 		setupEditableColumns();
-		
 	}
 	
-
-	
 	private void createUI() {
-		table.setEditable(true);
-		
-		
+		table.setEditable(true);		
 		
 		TableColumn<storage.targetData, Integer> targetTypeCol = new TableColumn<storage.targetData, Integer>("Target Type");
 		targetTypeCol.setCellValueFactory(new PropertyValueFactory<>("targetType"));
 		targetTypeCol.setMinWidth(100);
 		targetTypeCol.setEditable(true);
 		
-		/*
-		targetTypeCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-		
-		targetTypeCol.setOnEditCommit((TableColumn.CellEditEvent<storage.targetData, Integer> e)->{
-			int index = ((TableColumn.CellEditEvent<storage.targetData, Integer>) e).getTablePosition().getRow();
-			((storage.targetData) e.getTableView().getItems().get(index)).setTargetType(e.getNewValue());
-		});
-		*/
-		
-		
-		
-		
-		
 		TableColumn<storage.targetData, Boolean> isCompleteCol = new TableColumn<storage.targetData, Boolean>("Completed");
 		isCompleteCol.setCellValueFactory(new PropertyValueFactory<>("isComplete"));
 		isCompleteCol.setMinWidth(90);
-		
-		
-		
-		
+
 		TableColumn<storage.targetData, String> deadlineDateCol = new TableColumn<storage.targetData, String>("Deadline Date");
 		deadlineDateCol.setCellValueFactory(new PropertyValueFactory<>("deadlineDate"));
 		deadlineDateCol.setMinWidth(110);
@@ -69,16 +49,11 @@ public class ViewTargets {
 			int index = ((TableColumn.CellEditEvent<storage.targetData, String>) e).getTablePosition().getRow();
 			((storage.targetData) e.getTableView().getItems().get(index)).setDeadlineDate(e.getNewValue());
 		});
-		
-		
+				
 		targetValueCol = new TableColumn<storage.targetData, Integer>("Target Value");
 		targetValueCol.setCellValueFactory(new PropertyValueFactory<>("targetValue"));
 		targetValueCol.setMinWidth(100);
-		
-		
-		
-		
-		
+	
 		TableColumn<storage.targetData, Integer> valueRemainingCol = new TableColumn<storage.targetData, Integer>("Value Remaining");
 		valueRemainingCol.setCellValueFactory(new PropertyValueFactory<>("valueRemaining"));
 		valueRemainingCol.setMinWidth(140);
@@ -90,11 +65,10 @@ public class ViewTargets {
 		table.setEditable(true);
 		table.setPrefWidth(580);
 		table.getColumns().addAll( Arrays.asList(targetTypeCol, isCompleteCol, deadlineDateCol, targetValueCol, valueRemainingCol) );
-		
-		back.setLayoutX(8);
-		back.setLayoutY(420);
-		
 		GridPane.setConstraints(table, 0, 1);
+		
+		backBtn.setLayoutX(8);
+		backBtn.setLayoutY(423);	
 		
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -102,19 +76,24 @@ public class ViewTargets {
 		grid.setHgap(5);
 		grid.getChildren().addAll(table);
 		
-		group = new Group(back, grid);
+		group = new Group(backBtn, grid);
 		
-		scene = new Scene(group, 600, 450);
+		scene = new Scene(group, 600, 465);
 		MAIN.mainStage.setScene(scene);
-		MAIN.mainStage.setTitle("View Targets");
-		
+		MAIN.mainStage.setTitle("View Targets");	
 	             
-		back.setOnAction(e->{
+		backBtn.setOnAction(e->{
 			TargetsMenu.instantiate();
+			e.consume();
+		});
+		backBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				backBtn.fire();
+				ev.consume(); 
+			}
 		});
 
-	}
-	
+	}	
 	
 	public void setupEditableColumns() {
 		targetValueCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
@@ -123,12 +102,8 @@ public class ViewTargets {
 			((storage.targetData) e.getTableView().getItems().get(index)).setTargetValue(e.getNewValue());
 			table.getItems().clear();
 			table.getColumns().clear();
-			createUI();
-			
-			
+			createUI();				
 		});
-	}
-	
-	
+	}	
 	
 }

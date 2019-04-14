@@ -1,5 +1,3 @@
-
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
@@ -15,7 +12,11 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class DisplayChart {
 	static Map<String, Integer> dataToDisplay = new HashMap<>();
@@ -25,82 +26,69 @@ public class DisplayChart {
 	static String xLabel;
 	static String yLabel;
 	
+	private final Label title = new Label("Graphs");
 	private final Label timeScaleLbl = new Label();
 	private final Label booksPagesReadLbl = new Label();
 	private final ComboBox<String> timeScale = new ComboBox<String>();
 	private final ComboBox<String> booksPagesRead = new ComboBox<String>();
-	private final Button refresh = new Button("Generate graph");
+	private final Button updateBtn = new Button("Generate graph");
 	public static Stage Mstage;
 	
-	public static Button back = new Button("Back");
-	String title = "Progress";
+	public static Button backBtn = new Button("Back");
+	String progTitle = "Progress";
 	
 	DisplayChart(){
-		
+		MAIN.mainStage.setTitle("Graphs");
 		final NumberAxis xAxis = new NumberAxis();
 		final NumberAxis yAxis = new NumberAxis();
-
 		
-		refresh.setLayoutX(380);
-		refresh.setLayoutY(82);
+		title.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
+		title.setLayoutX(260);
+		title.setLayoutY(15);
+		
+		updateBtn.setLayoutX(380);
+		updateBtn.setLayoutY(82);
 		
 		timeScale.getItems().add("Yearly");
 		timeScale.getItems().add("Monthly");
 		timeScale.getItems().add("Weekly");
 		timeScale.setLayoutX(260);
 		timeScale.setLayoutY(112);
-		timeScaleLbl.setLayoutX(120);
+		timeScaleLbl.setLayoutX(100);
 		timeScaleLbl.setLayoutY(112);
 		booksPagesRead.getItems().add("Books");
 		booksPagesRead.getItems().add("Pages");
 		
-		booksPagesReadLbl.setLayoutX(120);
+		booksPagesReadLbl.setLayoutX(100);
 		booksPagesReadLbl.setLayoutY(82);
 		booksPagesRead.setLayoutX(260);
 		booksPagesRead.setLayoutY(82);
-		
-		
-	
-		
+			
 		timeScaleLbl.setText("Time Scale: ");
 		booksPagesReadLbl.setText("Books read/Pages read: ");
 		
-		//GenerateGraph graph = new GenerateGraph(xAxis, yAxis, title, dataToDisplay);
-		//graph.setLayoutX(50);
-		//graph.setLayoutY(50);
 		LineChart graph = new LineChart(xAxis, yAxis);
 		graph.setLayoutX(50);
 		graph.setLayoutY(140);
 		
-		back.setLayoutX(15);
-		back.setLayoutY(560);
+		backBtn.setLayoutX(15);
+		backBtn.setLayoutY(560);
 		
-		Group root = new Group(back, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl,graph, refresh);
-
-		Scene scene = new Scene(root, 640, 600);
-		setupHandles();
-		//Mstage.setTitle("Progress Chart");
-		//Mstage.setScene(scene);
-		//Mstage.show();
+		Group root = new Group(title, booksPagesRead, booksPagesReadLbl, timeScale, timeScaleLbl, graph, updateBtn, backBtn);
+		Scene scene = new Scene(root, 660, 600);
+		
+		setupHandlers();
 		MAIN.mainStage.setScene(scene);
 	}
 	
 	public void createGraph() {
 		
-	
-	
-		
-		
-		
 		if(booksPagesRead.getValue() == "Books") {
-			//final NumberAxis xAxis = new NumberAxis(xStartRange, xEndRange, xInterval);
 			NumberAxis xAxis = null;
 			NumberAxis yAxis = new NumberAxis();
-			//xAxis.setLabel(xLabel);
 			yAxis.setLabel("Books");
 			
-			dataToDisplay.clear();
-			
+			dataToDisplay.clear();			
 			
 			switch(timeScale.getValue()) {
 			
@@ -118,25 +106,23 @@ public class DisplayChart {
 				dataToDisplay = getBooksByFormat(2);
 				xAxis = new NumberAxis(1, Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH), 1);
 				xAxis.setLabel("Day of Month");
-				break;
-			
+				break;			
 			}
-			GenerateGraph graph = new GenerateGraph(xAxis, yAxis, title, dataToDisplay);
+			
+			GenerateGraph graph = new GenerateGraph(xAxis, yAxis, progTitle, dataToDisplay);
 			graph.setLayoutX(50);
 			graph.setLayoutY(180);
-			Group root = new Group(back, graph, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl, refresh);
+			Group root = new Group(backBtn, graph, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl, updateBtn);
 			Scene scene = new Scene(root, 640, 600);	
-			MAIN.mainStage.setScene(scene);
-			
+			MAIN.mainStage.setScene(scene);		
 		}
+		
 		if(booksPagesRead.getValue() == "Pages") {
 			NumberAxis xAxis = null;
-			NumberAxis yAxis = new NumberAxis();
-			
+			NumberAxis yAxis = new NumberAxis();		
 			yAxis.setLabel("Pages");
 			
-			dataToDisplay.clear();
-			
+			dataToDisplay.clear();			
 			
 			switch(timeScale.getValue()) {
 			
@@ -155,19 +141,16 @@ public class DisplayChart {
 				xAxis = new NumberAxis(1, Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH), 1);
 				xAxis.setLabel("Day of Month");
 				break;
-			}
-		
+			}		
 			
-			GenerateGraph graph = new GenerateGraph(xAxis, yAxis, title, dataToDisplay);
+			GenerateGraph graph = new GenerateGraph(xAxis, yAxis, progTitle, dataToDisplay);
 			graph.setLayoutX(50);
 			graph.setLayoutY(180);
 			
-			Group root = new Group(back, graph, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl, refresh);
+			Group root = new Group(backBtn, graph, booksPagesRead,booksPagesReadLbl, timeScale, timeScaleLbl, updateBtn);
 			Scene scene = new Scene(root, 640, 600);
-
 			
-			MAIN.mainStage.setScene(scene);
-			
+			MAIN.mainStage.setScene(scene);			
 		}
 	}
 	
@@ -181,8 +164,6 @@ public class DisplayChart {
 				y = formatter2.parse(entry.getKey());
 				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(y);
@@ -198,12 +179,9 @@ public class DisplayChart {
 				toStore = cal.get(Calendar.DAY_OF_WEEK) + 1;
 				break;
 			}
-			//toStore = cal.get(Calendar.YEAR);
 			System.out.println(toStore);
-			toReturn.put(Integer.toString(toStore), entry.getValue());
-			
-		}
-		
+			toReturn.put(Integer.toString(toStore), entry.getValue());			
+		}	
 		return toReturn;
 	}
 	
@@ -217,8 +195,6 @@ public class DisplayChart {
 				y = formatter2.parse(entry.getKey());
 				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(y);
@@ -234,40 +210,36 @@ public class DisplayChart {
 				toStore = cal.get(Calendar.DAY_OF_WEEK) + 1;
 				break;
 			}
-			//toStore = cal.get(Calendar.YEAR);
 			System.out.println(toStore);
 			toReturn.put(Integer.toString(toStore), entry.getValue());		
-		}
-		
+		}	
 		return toReturn;
 	}
-private void setupHandles() {
+	
+	private void setupHandlers() {	
 		
-		back.setOnAction(e->{
-			
+		backBtn.setOnAction(e->{	
 			ViewTrackingDataMenu.instantiate();
-			
+			e.consume();
+		});
+		backBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				backBtn.fire();
+				ev.consume(); 
+			}
 		});
 	
-		refresh.setOnAction(e -> {
+		updateBtn.setOnAction(e -> {
 			System.out.println(booksPagesRead.getValue());
-			createGraph();
-			
-			
+			createGraph();		
 		});
-		/*submitBtn.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent arg0) {
-
-				changeVisibility(dateRead, pagesReadTxt, addPreviouslyReadPagesBtn);
+		updateBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				updateBtn.fire();
+				ev.consume(); 
 			}
-
-		});*/
-}
-	public static void main(String args[]) {
-		
-		//Application.launch(DisplayChart.class, args);
+		});
 		
 	}
+
 }

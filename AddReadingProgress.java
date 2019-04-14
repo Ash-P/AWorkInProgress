@@ -7,15 +7,18 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class AddReadingProgress {
 
@@ -29,35 +32,16 @@ public class AddReadingProgress {
 	private Scene scene;
 	private Group group;
 	private Alert dialog = new Alert(AlertType.INFORMATION);
-	public static Button back = new Button("Back");
+	public static Button backBtn = new Button("Back");
 	
 	
 	public AddReadingProgress() {
 		createUI();
 		setupHandles();
-		scene = new Scene(group, 347, 180);
-		//Y = WINDOWY-42
+		scene = new Scene(group, 370, 180);
 		MAIN.mainStage.setScene(scene);
 		MAIN.mainStage.setTitle("Add Reading Progress");
 	}
-	
-	/*
-	@Override
-	public void start(Stage mainStage) throws Exception {
-		createUI();
-		setupHandles();
-		
-		scene = new Scene(group, 375, 200);
-		mainStage.setScene(scene);
-		mainStage.setTitle("Add Reading Progress");
-		mainStage.show();
-	}
-
-	public static void main(String args[]) {
-		launch(args);
-	}
-	*/
-	
 	
 	public void createUI() {
 		bookTitleBox.setPromptText("Book Title");
@@ -87,11 +71,11 @@ public class AddReadingProgress {
 		addBtn.setLayoutY(115);
 
 		clearBtn.setText("Clear");
-		clearBtn.setLayoutX(295);
+		clearBtn.setLayoutX(300);
 		clearBtn.setLayoutY(115);
 	
-		back.setLayoutX(15);
-		back.setLayoutY(140);
+		backBtn.setLayoutX(15);
+		backBtn.setLayoutY(138);
 		
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -99,7 +83,7 @@ public class AddReadingProgress {
 		grid.setHgap(5);
 		grid.getChildren().addAll(bookTitleBox,datePicker,pagesTxt);
 		
-		group = new Group(back, grid,addBtn,clearBtn);
+		group = new Group(backBtn, grid,addBtn,clearBtn);
 	}
 	
 	private void setupHandles() {
@@ -115,23 +99,15 @@ public class AddReadingProgress {
 					int status = book.status;
 					int pagesRemaining = book.pages - book.pagesRead;
 					if(validateFields(status, pagesRemaining, book.dateStarted, date, pages)) {
-					
 						alldata.userStore.totalPagesRead += pages;
-						
-						  book.pagesRead = book.pagesRead + pages;
-						  
-						  book.pagesReadOnADate +=  " " + date + "," + pages;
-						
-						
+						book.pagesRead = book.pagesRead + pages;
+						book.pagesReadOnADate +=  " " + date + "," + pages;
 						if(book.pagesRead == book.pages) { 
-						
 							book.status = 0;
 							book.dateCompleted = date;
-							
 							alldata.userStore.totalBooksRead++;
 						}
 						else if(book.pagesRead == 0) {
-							
 							book.status = 1;
 							book.dateStarted = date;
 						}
@@ -146,10 +122,17 @@ public class AddReadingProgress {
 						return;
 					}
 				}
+				MAIN.createAlert(AlertType.ERROR, "Error", "Reading progress validation unsuccessful", ""); //TODO
 				dialog.setTitle("Failure");
 				dialog.setHeaderText("Reading progress not added");
 				dialog.setContentText("You have failed to successfully add reading progress to " + bookTitle + ".");
 				dialog.showAndWait();
+			}
+		});
+		addBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				addBtn.fire();
+				ev.consume(); 
 			}
 		});
 
@@ -162,9 +145,22 @@ public class AddReadingProgress {
 				pagesTxt.clear();
 			}
 		});
+		clearBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				clearBtn.fire();
+				ev.consume(); 
+			}
+		});
 		
-		back.setOnAction(e->{
+		backBtn.setOnAction(e->{
 			ManageBooksMenu.instantiate();
+			e.consume();
+		});
+		backBtn.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+			if (ev.getCode() == KeyCode.ENTER) {
+				backBtn.fire();
+				ev.consume(); 
+			}
 		});
 	}
 	

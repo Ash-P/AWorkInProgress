@@ -35,7 +35,8 @@ public class AddATarget {
 
 	private final Label title = new Label("Add a Target");
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
-	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
 	private final ComboBox<String> targetTypeBox = new ComboBox<>();
 	private final ComboBox<String> bookTitleBox = new ComboBox<>();
 	private final DatePicker deadlineDatePicker = new DatePicker();

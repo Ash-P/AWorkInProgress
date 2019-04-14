@@ -33,7 +33,7 @@ public class ViewTargets {
 		
 		TableColumn<storage.targetData, Integer> targetTypeCol = new TableColumn<storage.targetData, Integer>("Target Type");
 		targetTypeCol.setCellValueFactory(new PropertyValueFactory<>("targetType"));
-		targetTypeCol.setMinWidth(100);
+		targetTypeCol.setMinWidth(140);
 		targetTypeCol.setEditable(true);
 		
 		TableColumn<storage.targetData, Boolean> isCompleteCol = new TableColumn<storage.targetData, Boolean>("Completed");
